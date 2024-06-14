@@ -1,48 +1,44 @@
+import { Container } from '@src/components/container'
 import SearchInput from '@src/components/forms/search-input'
-import ListItem from '@src/components/lists/list-item'
+import ListItemPressable from '@src/components/lists/list-item-pressable'
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
+import { routes } from '@src/configs/types/routes'
 import { useState } from 'react'
 import { View, StyleSheet, FlatList } from 'react-native'
 
-export default function HorariosPage() {
+export default function ClientScheduleTimeScreen() {
   const [searchTerm, setSearchTerm] = useState('')
 
-  const horarios = [{ horario: '09:30', id: '1' }]
+  const times = [{ horario: '09:30', id: '1' }]
 
   return (
-    <View style={styles.horarios_container}>
+    <Container>
       <CustomText
         text="Escolha qual horário fica melhor para você"
         type="subtitle"
         textAlign="center"
       />
       <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <View style={styles.horarios_listContainer}>
+      <View style={styles.list}>
         <FlatList
-          data={horarios}
+          data={times}
           renderItem={({ item }) => (
-            <ListItem
+            <ListItemPressable
               label={item.horario}
-              id={item.id}
+              key={item.id}
               searchTerm={searchTerm}
-              url="/cliente/agendar/confirmacao"
+              url={routes.CLIENT_SCHEDULE_CONFIRM}
             />
           )}
         />
       </View>
-    </View>
+    </Container>
   )
 }
 
 const styles = StyleSheet.create({
-  horarios_container: {
-    backgroundColor: theme.colors.background,
-    height: '100%',
-    padding: theme.sizes.small,
-    paddingBottom: theme.sizes.semi
-  },
-  horarios_listContainer: {
+  list: {
     marginTop: theme.sizes.small
   }
 })

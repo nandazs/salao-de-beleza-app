@@ -1,14 +1,16 @@
+import { Container } from '@src/components/container'
 import SearchInput from '@src/components/forms/search-input'
-import ListItem from '@src/components/lists/list-item'
+import ListItemPressable from '@src/components/lists/list-item-pressable'
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
+import { routes } from '@src/configs/types/routes'
 import { useState } from 'react'
 import { FlatList, View, StyleSheet } from 'react-native'
 
-export default function ProfissionaisPage() {
+export default function ClientScheduleProfessionalScreen() {
   const [searchTerm, setSearchTerm] = useState('')
 
-  const profissionais = [
+  const professionals = [
     {
       nome: 'Teste',
       id: '1',
@@ -32,43 +34,37 @@ export default function ProfissionaisPage() {
   ]
 
   return (
-    <View style={styles.profissionais_container}>
+    <Container>
       <CustomText
         text="Escolha por qual profissional deseja ser atendido(a)"
         type="subtitle"
         textAlign="center"
       />
       <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <View style={styles.profissionais_listContainer}>
+      <View style={styles.list}>
         <FlatList
-          data={profissionais}
+          data={professionals}
           renderItem={({ item }) => (
-            <ListItem
+            <ListItemPressable
               label={item.nome}
-              id={item.id}
+              key={item.id}
               image={item.image}
               searchTerm={searchTerm}
               imageStyle={{
                 height: theme.sizes.largeX,
                 width: theme.sizes.largeX
               }}
-              url="/cliente/agendar/horarios"
+              url={routes.CLIENT_SCHEDULE_TIME}
             />
           )}
         />
       </View>
-    </View>
+    </Container>
   )
 }
 
 const styles = StyleSheet.create({
-  profissionais_container: {
-    backgroundColor: theme.colors.background,
-    height: '100%',
-    padding: theme.sizes.small,
-    paddingBottom: theme.sizes.semi
-  },
-  profissionais_listContainer: {
+  list: {
     marginTop: theme.sizes.small
   }
 })

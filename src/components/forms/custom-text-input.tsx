@@ -8,16 +8,18 @@ import {
 } from 'react-native'
 import { Control, Controller, FieldError } from 'react-hook-form'
 import { theme } from '@src/configs/theme'
+import CustomText from '../text/custom-text'
 
 interface InputTextProps {
   control?: Control<any, any>
   error?: FieldError
   image?: ImageSourcePropType
-  placeholder: string
-  name: 'email' | 'password' | 'search'
+  placeholder?: string
+  name: 'email' | 'password' | 'search' | 'nome'
   onChangeText?: any
   value?: any
   iconPosition?: 'left' | 'right'
+  label?: string
 }
 
 export const CustomTextInput = ({
@@ -28,10 +30,12 @@ export const CustomTextInput = ({
   name,
   onChangeText,
   value,
-  iconPosition = 'left'
+  iconPosition = 'left',
+  label
 }: InputTextProps) => {
   return (
-    <>
+    <View>
+      {label && <CustomText text={label} textAlign="left" />}
       <View
         style={[
           styles.lp_inputContainer,
@@ -46,14 +50,16 @@ export const CustomTextInput = ({
                 required: true
               }}
               render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  placeholder={placeholder}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  style={styles.lp_input}
-                  placeholderTextColor={theme.typography.color.medium}
-                />
+                <>
+                  <TextInput
+                    placeholder={placeholder}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    style={styles.lp_input}
+                    placeholderTextColor={theme.typography.color.medium}
+                  />
+                </>
               )}
               name={name}
             />
@@ -72,7 +78,7 @@ export const CustomTextInput = ({
           </>
         )}
       </View>
-    </>
+    </View>
   )
 }
 

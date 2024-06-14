@@ -1,14 +1,15 @@
 import Button from '@src/components/button'
+import { Container } from '@src/components/container'
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
 import { View, StyleSheet } from 'react-native'
 
-export default function ConfirmacaoPage() {
+export default function ClientScheduleConfirmationScreen() {
   const info = {
     date: '12/06/24',
     service: 'Corte de cabelo',
     professional: 'Anna',
-    hour: '10:00'
+    time: '10:00'
   }
 
   const onPressRefused = () => {
@@ -17,8 +18,8 @@ export default function ConfirmacaoPage() {
   const onPressAccepted = () => {}
 
   return (
-    <View style={styles.confirmation_container}>
-      <View style={styles.confirmation_text}>
+    <Container additionalStyle={styles.container}>
+      <View style={styles.text}>
         <CustomText
           text={`Data: ${info.date}`}
           type="content"
@@ -35,55 +36,53 @@ export default function ConfirmacaoPage() {
           textAlign="left"
         />
         <CustomText
-          text={`Horário: ${info.hour}`}
+          text={`Horário: ${info.time}`}
           type="content"
           textAlign="left"
         />
       </View>
       <View>
         <CustomText text="Deseja confirmar agendamento?" type="subtitle" />
-        <View style={styles.confirmation_buttons}>
+        <View style={styles.button_container}>
           <Button
             text="Não"
             onPress={onPressRefused}
-            additionalStyle={{ button: styles.confirmation_button }}
+            additionalStyle={{ button: styles.button }}
           />
           <Button
             text="Sim"
             onPress={onPressAccepted}
-            additionalStyle={{ button: styles.confirmation_button }}
+            additionalStyle={{ button: styles.button }}
           />
         </View>
       </View>
-    </View>
+    </Container>
   )
 }
 
 const styles = StyleSheet.create({
-  confirmation_container: {
-    backgroundColor: theme.colors.background,
-    height: '100%',
-    padding: theme.sizes.semi,
-    paddingBottom: theme.sizes.semi,
-    justifyContent: 'center',
-    gap: theme.sizes.large
+  container: {
+    justifyContent: 'space-between',
+    gap: theme.sizes.large,
+    paddingTop: theme.sizes.semi
   },
-  confirmation_listContainer: {
+  list: {
     marginTop: theme.sizes.small
   },
-  confirmation_text: {
+  text: {
     backgroundColor: theme.colors.secondary,
     flexDirection: 'column',
     borderRadius: theme.sizes.small,
     padding: theme.sizes.standard
   },
-  confirmation_buttons: {
+  button_container: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: theme.sizes.small,
-    gap: theme.sizes.small
+    gap: theme.sizes.small,
+    marginBottom: theme.sizes.small
   },
-  confirmation_button: {
+  button: {
     flex: 1
   }
 })

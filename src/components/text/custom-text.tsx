@@ -3,22 +3,24 @@ import { StyleSheet, Text } from 'react-native'
 
 interface CustomTextProps {
   text: string
-  type: 'title' | 'subtitle' | 'content' | 'placeholder'
+  type?: 'title' | 'subtitle' | 'content' | 'placeholder' | 'paragraph'
   textAlign?: 'center' | 'left' | 'right' | 'justify'
-  additionalStyle?: object
+  style?: object
   textTransform?: 'uppercase' | 'lowercase' | 'capitalize' | 'none'
   margin?: number
   marginBottom?: number
+  fontSize?: number
 }
 
 export default function CustomText({
   text,
-  type,
+  type = 'title',
   textAlign = 'center',
-  additionalStyle,
+  style,
   textTransform = 'none',
   margin,
-  marginBottom
+  marginBottom,
+  fontSize
 }: CustomTextProps) {
   const getStylesByType = () => {
     if (type === 'title') {
@@ -36,6 +38,10 @@ export default function CustomText({
     if (type === 'placeholder') {
       return styles.placeholder
     }
+
+    if (type === 'paragraph') {
+      return styles.paragraph
+    }
   }
 
   const styleByType = getStylesByType()
@@ -44,8 +50,14 @@ export default function CustomText({
     <Text
       style={[
         styleByType,
-        additionalStyle,
-        { textTransform, textAlign, margin, marginBottom }
+        style,
+        {
+          textTransform,
+          textAlign,
+          margin,
+          marginBottom,
+          fontSize: fontSize ?? styleByType?.fontSize
+        }
       ]}>
       {text}
     </Text>
@@ -68,5 +80,9 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: theme.typography.placeholder.fontSize,
     color: theme.typography.placeholder.color
+  },
+  paragraph: {
+    fontSize: theme.typography.paragraph.fontSize,
+    color: theme.typography.paragraph.color
   }
 })

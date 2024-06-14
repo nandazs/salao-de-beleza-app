@@ -27,6 +27,10 @@ export const theme = {
       fontSize: 18,
       color: '#A7738F'
     },
+    paragraph: {
+      fontSize: 16,
+      color: '#A7738F'
+    },
     content: {
       fontSize: 24,
       color: '#fff'

@@ -3,7 +3,7 @@ import { Link } from 'expo-router'
 import { Pressable, Image, StyleSheet } from 'react-native'
 
 interface CustomBackButton {
-  url: any
+  url: string
 }
 
 export default function CustomBackButton({ url }: CustomBackButton) {
