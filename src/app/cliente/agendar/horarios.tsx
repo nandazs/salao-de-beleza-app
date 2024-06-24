@@ -16,8 +16,8 @@ export default function ClientScheduleTimeScreen() {
     <Container>
       <CustomText
         text="Escolha qual horário fica melhor para você"
-        type="subtitle"
-        textAlign="center"
+        type="paragraph"
+        textAlign="left"
       />
       <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <View style={styles.list}>

@@ -28,11 +28,11 @@ export const theme = {
       color: '#A7738F'
     },
     paragraph: {
-      fontSize: 16,
+      fontSize: 18,
       color: '#A7738F'
     },
     content: {
-      fontSize: 24,
+      fontSize: 18,
       color: '#fff'
     },
     placeholder: {

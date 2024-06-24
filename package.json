@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@dev-plugins/react-query": "^0.0.6",
+    "@expo-google-fonts/roboto-slab": "^0.2.3",
+    "@react-native-picker/picker": "^2.7.7",
     "@react-navigation/drawer": "^6.6.15",
     "@react-navigation/native": "^6.1.9",
     "@reduxjs/toolkit": "^2.2.5",
@@ -30,7 +32,7 @@
     "expo": "~51.0.4",
     "expo-calendar": "~13.0.5",
     "expo-dev-client": "~4.0.13",
-    "expo-font": "~12.0.5",
+    "expo-font": "~12.0.7",
     "expo-linking": "~6.3.1",
     "expo-router": "~3.5.12",
     "expo-secure-store": "~13.0.1",
@@ -48,7 +50,8 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "~0.19.10",
     "react-redux": "^9.1.2",
-    "styled-components": "^5.3.11"
+    "styled-components": "^5.3.11",
+    "undefined": "@expo-google-fonts/roboto+slab"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

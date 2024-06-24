@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background,
     height: '100%',
-    padding: theme.sizes.small,
+    paddingTop: theme.sizes.small,
+    paddingHorizontal: theme.sizes.standard,
     paddingBottom: theme.sizes.large
   }
 })

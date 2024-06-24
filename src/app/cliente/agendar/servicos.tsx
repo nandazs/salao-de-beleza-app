@@ -37,8 +37,8 @@ export default function ClientScheduleServiceScreen() {
     <Container>
       <CustomText
         text="Escolha qual serviço deseja fazer"
-        type="subtitle"
-        textAlign="center"
+        type="paragraph"
+        textAlign="left"
       />
       <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <View style={styles.list}>

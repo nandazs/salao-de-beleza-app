@@ -6,9 +6,8 @@ import { Container } from '@src/components/container'
 
 export default function AdminConfigurationsScreen() {
   const opcoes = [
-    { nome: 'Serviços', url: routes.ADMIN_REGISTER_SERVICE },
-    { nome: 'Profissionais', url: routes.ADMIN_REGISTER_PROFESSIONAL },
-    { nome: 'Horários', url: routes.ADMIN_REGISTER_TIME }
+    { nome: 'Serviços', url: routes.ADMIN_SERVICES },
+    { nome: 'Profissionais', url: routes.ADMIN_PROFESSIONALS }
   ]
 
   return (

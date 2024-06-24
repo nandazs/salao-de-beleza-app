@@ -7,7 +7,7 @@ import {
   DrawerItemList,
   DrawerToggleButton
 } from '@react-navigation/drawer'
-import { Image, View, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 
 interface CustomDrawerMenuProps {
   menu: Array<{
@@ -20,9 +20,7 @@ interface CustomDrawerMenuProps {
 function CustomDrawerContent(drawerProps: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...drawerProps}>
-      <View style={styles.menu_header}>
-        <Image source={require('@src/assets/images/icons/arrow-left.png')} />
-      </View>
+      <View style={styles.menu_header} />
       <DrawerItemList {...drawerProps} />
     </DrawerContentScrollView>
   )

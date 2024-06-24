@@ -43,7 +43,9 @@ export const CustomTextInput = ({
         ]}>
         {control ? (
           <>
-            {image && <Image source={image} />}
+            {image && (
+              <Image source={image} style={{ marginLeft: theme.sizes.small }} />
+            )}
             <Controller
               control={control}
               rules={{
@@ -57,7 +59,7 @@ export const CustomTextInput = ({
                     onChangeText={onChange}
                     value={value}
                     style={styles.lp_input}
-                    placeholderTextColor={theme.typography.color.medium}
+                    placeholderTextColor={theme.typography.title.color}
                   />
                 </>
               )}

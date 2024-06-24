@@ -5,14 +5,13 @@ export default function Layout() {
     {
       name: 'index',
       title: '',
-      drawerLabel: 'Home'
+      drawerLabel: 'Início'
     },
     {
       name: 'agendamentos',
       title: 'Agendamentos',
       drawerLabel: 'Agendamentos'
-    },
-    { name: 'informacoes', title: 'Informações', drawerLabel: 'Informações' }
+    }
   ]
 
   return <CustomDrawerMenu menu={menu} />

@@ -12,7 +12,7 @@ import { theme } from '@src/configs/theme'
 interface ListItemPressableProps {
   label: string
   image?: ImageSourcePropType
-  key: string
+  key?: string | number
   searchTerm?: string
   imageStyle?: any
   url?: string
@@ -23,7 +23,7 @@ interface ListItemPressableProps {
 interface ListItemProps {
   label: string
   image?: ImageSourcePropType
-  key: string
+  key?: string | number
   searchTerm?: string
   imageStyle?: any
   leftIcon?: any
@@ -45,7 +45,7 @@ function ListItem({
         <CustomText type="content" text={label} />
         <Image
           source={leftIcon ?? require('@src/assets/images/icons/arrow.png')}
-          style={styles.arrow}
+          style={styles.letfIcon}
         />
       </View>
     </Pressable>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     gap: theme.sizes.small
   },
-  arrow: {
+  letfIcon: {
     position: 'absolute',
     right: theme.sizes.small
   }

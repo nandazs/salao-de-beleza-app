@@ -1,5 +1,11 @@
 import { theme } from '@src/configs/theme'
 import { StyleSheet, Text } from 'react-native'
+import {
+  useFonts,
+  RobotoSlab_400Regular,
+  RobotoSlab_600SemiBold
+} from '@expo-google-fonts/roboto-slab'
+import { ReactNode } from 'react'
 
 interface CustomTextProps {
   text: string
@@ -10,6 +16,8 @@ interface CustomTextProps {
   margin?: number
   marginBottom?: number
   fontSize?: number
+  fontWeight?: 'medium' | 'semibold'
+  children?: ReactNode
 }
 
 export default function CustomText({
@@ -20,8 +28,19 @@ export default function CustomText({
   textTransform = 'none',
   margin,
   marginBottom,
-  fontSize
+  fontSize,
+  fontWeight,
+  children
 }: CustomTextProps) {
+  const [fontsLoaded, fontError] = useFonts({
+    RobotoSlab_400Regular,
+    RobotoSlab_600SemiBold
+  })
+
+  if (!fontsLoaded && !fontError) {
+    return null
+  }
+
   const getStylesByType = () => {
     if (type === 'title') {
       return styles.title
@@ -56,10 +75,16 @@ export default function CustomText({
           textAlign,
           margin,
           marginBottom,
-          fontSize: fontSize ?? styleByType?.fontSize
+          fontSize: fontSize ?? styleByType?.fontSize,
+          fontFamily:
+            fontWeight === 'medium'
+              ? 'RobotoSlab_500Medium'
+              : fontWeight === 'semibold'
+                ? 'RobotoSlab_600SemiBold'
+                : 'RobotoSlab_400Regular'
         }
       ]}>
-      {text}
+      {text} {children}
     </Text>
   )
 }

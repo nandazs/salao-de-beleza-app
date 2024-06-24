@@ -10,9 +10,7 @@
       "image": "./src/assets/images/splash.png",
       "backgroundColor": "#222"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false
     },
@@ -29,7 +27,17 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/inter/RobotoSlab_400Regular.ttf",
+            "node_modules/@expo-google-fonts/inter/RobotoSlab_500Medium.ttf",
+            "node_modules/@expo-google-fonts/inter/RobotoSlab_600SemiBold.ttf"
+          ]
+        }
+      ]
     ],
     "extra": {
       "router": {

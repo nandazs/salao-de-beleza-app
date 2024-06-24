@@ -20,14 +20,14 @@ export default function Layout() {
       <Stack.Screen
         name="servicos"
         options={{
-          title: 'SERVIÇOS',
+          title: 'Serviços',
           headerLeft: () => <CustomBackButton url="/" />
         }}
       />
       <Stack.Screen
         name="profissionais"
         options={{
-          title: 'PROFISSIONAIS',
+          title: 'Profissionais',
           headerLeft: () => (
             <CustomBackButton url={routes.CLIENT_SCHEDULE_SERVICE} />
           )
@@ -36,7 +36,7 @@ export default function Layout() {
       <Stack.Screen
         name="horarios"
         options={{
-          title: 'HORÁRIOS',
+          title: 'Horários',
           headerLeft: () => (
             <CustomBackButton url={routes.CLIENT_SCHEDULE_PROFESSIONAL} />
           )
@@ -45,7 +45,7 @@ export default function Layout() {
       <Stack.Screen
         name="confirmacao"
         options={{
-          title: 'CONFIRMAÇÃO',
+          title: 'Confirmação',
           headerLeft: () => (
             <CustomBackButton url={routes.CLIENT_SCHEDULE_TIME} />
           )

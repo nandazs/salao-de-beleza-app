@@ -5,7 +5,7 @@ export default function Layout() {
     {
       name: 'index',
       title: 'Agendamentos',
-      drawerLabel: 'Home'
+      drawerLabel: 'Início'
     },
     { name: 'pagamentos', title: 'Pagamentos', drawerLabel: 'Pagamentos' },
     {

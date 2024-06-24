@@ -37,8 +37,8 @@ export default function ClientScheduleProfessionalScreen() {
     <Container>
       <CustomText
         text="Escolha por qual profissional deseja ser atendido(a)"
-        type="subtitle"
-        textAlign="center"
+        type="paragraph"
+        textAlign="left"
       />
       <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <View style={styles.list}>
@@ -48,12 +48,7 @@ export default function ClientScheduleProfessionalScreen() {
             <ListItemPressable
               label={item.nome}
               key={item.id}
-              image={item.image}
               searchTerm={searchTerm}
-              imageStyle={{
-                height: theme.sizes.largeX,
-                width: theme.sizes.largeX
-              }}
               url={routes.CLIENT_SCHEDULE_TIME}
             />
           )}

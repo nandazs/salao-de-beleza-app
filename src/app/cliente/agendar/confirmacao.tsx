@@ -19,6 +19,11 @@ export default function ClientScheduleConfirmationScreen() {
 
   return (
     <Container additionalStyle={styles.container}>
+      <CustomText
+        text="Revise o seu agendamento antes de confirmar:"
+        type="paragraph"
+      />
+
       <View style={styles.text}>
         <CustomText
           text={`Data: ${info.date}`}
