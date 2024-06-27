@@ -1,29 +1,24 @@
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
+import { NormalizedSchedules } from '@src/normalizers/types'
 import { StyleSheet, View } from 'react-native'
 
 interface SchedulesProps {
-  schedules: Array<{
-    data: string
-    horario: string
-    servico: string
-    profissional: string
-    id: string | number
-  }>
+  schedules: NormalizedSchedules
 }
 
 export const Schedules = ({ schedules }: SchedulesProps) => {
   return (
     <View style={styles.container}>
       {schedules.map((item) => (
-        <View key={item.id} style={styles.schedule}>
+        <View key={item.idAgendamento} style={styles.schedule}>
           <CustomText
             text={`Data: ${item.data}`}
             type="content"
             textAlign="left"
           />
           <CustomText
-            text={`Horário: ${item.horario}`}
+            text={`Horário: ${item.hora}`}
             type="content"
             textAlign="left"
           />
@@ -33,7 +28,7 @@ export const Schedules = ({ schedules }: SchedulesProps) => {
             textAlign="left"
           />
           <CustomText
-            text={`Profissional: ${item.profissional}`}
+            text={`Profissional: ${item.nomeFuncionario}`}
             type="content"
             textAlign="left"
           />

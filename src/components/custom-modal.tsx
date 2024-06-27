@@ -1,5 +1,5 @@
 import React, { Dispatch, ReactNode, SetStateAction } from 'react'
-import { Alert, Modal, StyleSheet, Text, Pressable, View } from 'react-native'
+import { Alert, Modal, StyleSheet, View } from 'react-native'
 
 interface CustomModalProps {
   open: boolean
@@ -12,8 +12,6 @@ export const CustomModal = ({
   open,
   setOpenModal
 }: CustomModalProps) => {
-  // useAppSelector open
-
   return (
     <Modal
       animationType="slide"
@@ -51,25 +49,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF'
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3'
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center'
   }
 })

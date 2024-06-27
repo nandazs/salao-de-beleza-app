@@ -4,50 +4,52 @@ import { theme } from '@src/configs/theme'
 import { routes } from '@src/configs/types/routes'
 import { Container } from '@src/components/container'
 import CustomText from '@src/components/text/custom-text'
-import { Link } from 'expo-router'
 import ListItemPressable from '@src/components/lists/list-item-pressable'
 import { CustomModal } from '@src/components/custom-modal'
 import Button from '@src/components/button'
+import {
+  useDeleteProfessional,
+  useGetProfessionalsBySalon
+} from '@src/services/hooks'
+import { useAppContext } from '@src/state/hooks'
+import { Professional } from '@src/services/types'
+import { useRouter } from 'expo-router'
 
 export default function AdminConfigProfessionalsScreen() {
-  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
-  const professionals = [
-    {
-      nome: 'Teste Sobrenome',
-      id: 1
-    },
-    {
-      nome: 'Teste Sobrenome',
-      id: 2
-    },
-    {
-      nome: 'Teste Sobrenome',
-      id: 3
-    },
-    {
-      nome: 'Teste Sobrenome',
-      id: 4
-    },
-    {
-      nome: 'Teste Sobrenome',
-      id: 5
-    },
-    {
-      nome: 'Teste Sobrenome',
-      id: 6
-    },
-    {
-      nome: 'Teste Sobrenome',
-      id: 7
-    },
-    {
-      nome: 'Teste Sobrenome',
-      id: 8
-    }
-  ]
+  const { salonId } = useAppContext()
+  const router = useRouter()
+  const deleteProfessional = useDeleteProfessional()
+  const [professionalToDelete, setProfessionalToDelete] = useState<string>('')
 
-  const onRemoveProfessional = () => {
+  if (!salonId) {
+    return null
+  }
+
+  const { data } = useGetProfessionalsBySalon(salonId)
+
+  const { setSelectedProfessionalToEdit } = useAppContext()
+
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false)
+
+  const removeProfessional = () => {
+    deleteProfessional.mutate(professionalToDelete, {
+      onSuccess: () => {
+        setOpenConfirmModal(false)
+      }
+    })
+  }
+
+  const onRemoveProfessional = (id: string) => {
     setOpenConfirmModal(true)
+    setProfessionalToDelete(id)
+  }
+
+  const onEditProfessional = (item: Professional) => {
+    setSelectedProfessionalToEdit({
+      professionalId: item.idFuncionario,
+      services: item.servicosPrestados
+    })
+    router.push(routes.ADMIN_EDIT_PROFESSIONAL)
   }
 
   return (
@@ -58,7 +60,7 @@ export default function AdminConfigProfessionalsScreen() {
           <Button
             text="Sim"
             uppercase
-            onPress={() => {}}
+            onPress={removeProfessional}
             additionalStyle={{
               button: { marginTop: theme.sizes.small, flex: 1 }
             }}
@@ -82,21 +84,18 @@ export default function AdminConfigProfessionalsScreen() {
       />
       <View style={styles.list}>
         <FlatList
-          data={professionals}
+          data={data}
           renderItem={({ item }) => (
-            <View key={item.id} style={styles.item}>
-              <CustomText type="content" text={item.nome} />
+            <View key={item.idFuncionario} style={styles.item}>
+              <CustomText type="content" text={item.nomeFuncionario} />
               <View style={styles.options}>
-                <Link
-                  href={{
-                    pathname: routes.ADMIN_EDIT_PROFESSIONAL,
-                    params: { id: 'item.id' }
-                  }}>
+                <Pressable onPress={() => onEditProfessional(item)}>
                   <Image
                     source={require('@src/assets/images/icons/edit.png')}
                   />
-                </Link>
-                <Pressable onPress={onRemoveProfessional}>
+                </Pressable>
+                <Pressable
+                  onPress={() => onRemoveProfessional(item.idFuncionario)}>
                   <Image
                     source={require('@src/assets/images/icons/close.png')}
                   />

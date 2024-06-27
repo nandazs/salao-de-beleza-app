@@ -13,7 +13,8 @@ export enum routes {
   ADMIN_REMOVE_SERVICE = '/admin/config/servicos/remover',
   ADMIN_PROFESSIONALS = '/admin/config/profissionais',
   ADMIN_ADD_PROFESSIONAL = '/admin/config/profissionais/adicionar',
-  ADMIN_EDIT_PROFESSIONAL = '/admin/config/profissionais/editar/[id]',
-  ADMIN_EDIT_PROFESSIONAL_SERVICES = '/admin/config/profissionais/editar/[id]/servicos',
-  ADMIN_EDIT_PROFESSIONAL_TIMES = '/admin/config/profissionais/editar/[id]/horarios'
+  ADMIN_EDIT_PROFESSIONAL = '/admin/config/profissionais/editar',
+  ADMIN_EDIT_PROFESSIONAL_SERVICES = '/admin/config/profissionais/editar/servicos',
+  ADMIN_EDIT_PROFESSIONAL_TIMES = '/admin/config/profissionais/editar/horarios',
+  ADMIN_CONFIGURATIONS = '/admin/configuracoes'
 }

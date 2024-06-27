@@ -8,18 +8,32 @@ import { useState } from 'react'
 import { Picker } from '@src/components/picker'
 import Button from '@src/components/button'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useGetAllSalons } from '@src/services/hooks'
+import { useAppContext } from '@src/state/hooks'
 
 export default function HomeScreen() {
-  const [selected, setSelected] = useState<{ nome: string } | undefined>()
+  const [selected, setSelected] = useState<string>()
+  const { data } = useGetAllSalons()
+  const { setSalonId } = useAppContext()
 
-  const empresas = [
-    { nome: 'Salao1' },
-    { nome: 'Salao2' },
-    { nome: 'Salao3' },
-    { nome: 'Salao4' }
-  ]
+  if (!data) {
+    return (
+      <CustomText text="Escolha a empresa" type="title" style={styles.title} />
+    )
+  }
 
-  const onPressContinueButton = () => {}
+  const salons = data?.map((salon) => ({
+    name: salon.nomeSalao,
+    id: salon.idSalao
+  }))
+
+  if (!salons?.length) {
+    return null
+  }
+
+  const onPressContinueButton = () => {
+    setSalonId(selected)
+  }
 
   return (
     <SafeAreaView style={{ backgroundColor: theme.colors.background }}>
@@ -52,7 +66,7 @@ export default function HomeScreen() {
           </CustomText>
         </View>
         <Picker
-          items={empresas}
+          items={salons}
           placeholder="Selecionar"
           setSelected={setSelected}
           selected={selected}

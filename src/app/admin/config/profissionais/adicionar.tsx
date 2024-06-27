@@ -1,45 +1,37 @@
 import CustomText from '@src/components/text/custom-text'
 import React, { useState } from 'react'
-import { View, ImageSourcePropType, StyleSheet, FlatList } from 'react-native'
+import { View, StyleSheet, FlatList } from 'react-native'
 import ListItemPressable from '@src/components/lists/list-item-pressable'
 import { theme } from '@src/configs/theme'
 import Button from '@src/components/button'
 import { useForm } from 'react-hook-form'
 import { CustomTextInput } from '@src/components/forms/custom-text-input'
 import { Container } from '@src/components/container'
+import { useRegisterProfessional } from '@src/services/hooks'
+import { routes } from '@src/configs/types/routes'
+import { useRouter } from 'expo-router'
+import { services } from '@src/configs/types/services'
+import { useAppContext } from '@src/state/hooks'
 
-const icons: { [key: string]: ImageSourcePropType } = {
-  '1': require('@src/assets/images/icons/arrow-left.png'),
-  '2': require('@src/assets/images/icons/arrow-left.png'),
-  '3': require('@src/assets/images/icons/arrow-left.png'),
-  '4': require('@src/assets/images/icons/arrow-left.png'),
-  '5': require('@src/assets/images/icons/arrow-left.png'),
-  '6': require('@src/assets/images/icons/arrow-left.png'),
-  '7': require('@src/assets/images/icons/arrow-left.png'),
-  '8': require('@src/assets/images/icons/arrow-left.png'),
-  '9': require('@src/assets/images/icons/arrow-left.png'),
-  '10': require('@src/assets/images/icons/arrow-left.png')
+interface FormData {
+  name: string
+  services: string[]
 }
 
 export default function AdminAddProfessionalScreen() {
-  const professionals = [
-    { title: 'TESTE', id: '1' },
-    { title: 'Corte de cabelo', id: '2' },
-    { title: 'TESTE', id: '3' },
-    { title: 'Corte de cabelo', id: '4' },
-    { title: 'TESTE', id: '5' },
-    { title: 'Corte de cabelo', id: '6' },
-    { title: 'Corte de cabelo', id: '7' },
-    { title: 'Corte de cabelo', id: '8' },
-    { title: 'Corte de cabelo', id: '9' },
-    { title: 'Corte de cabelo', id: '10' },
-    { title: 'Corte de cabelo', id: '11' }
-  ]
+  const register = useRegisterProfessional()
+  const router = useRouter()
+  const { salonId } = useAppContext()
+
+  const filteredServices = services.filter(
+    (item, index) => services[index]?.id === item.id
+  )
 
   const {
     control,
-    formState: { errors }
-  } = useForm({ defaultValues: { nome: '', servicos: [] } })
+    formState: { errors },
+    handleSubmit
+  } = useForm({ defaultValues: { name: '', services: [] } })
 
   const [selecteds, setSelecteds] = useState<string[]>([])
 
@@ -59,15 +51,25 @@ export default function AdminAddProfessionalScreen() {
     return require('@src/assets/images/icons/add.png')
   }
 
-  const onAddProfessional = () => {}
+  const onAddProfessional = (data: FormData) => {
+    const professional = {
+      name: data.name,
+      salon: salonId,
+      services: selecteds
+    }
+
+    register.mutate(professional, {
+      onSuccess: () => router.push(routes.ADMIN_PROFESSIONALS)
+    })
+  }
 
   return (
     <>
       <Container additionalStyle={styles.container}>
         <CustomTextInput
           control={control}
-          error={errors.nome}
-          name="nome"
+          error={errors.name}
+          name="name"
           label="Nome"
           placeholder="Digite o nome do(a) profissional"
         />
@@ -76,12 +78,12 @@ export default function AdminAddProfessionalScreen() {
           <CustomText text="Selecionar serviços" textAlign="left" />
           <View style={styles.list}>
             <FlatList
-              data={professionals}
+              data={filteredServices}
               renderItem={({ item }) => (
                 <ListItemPressable
-                  label={item.title}
+                  label={item.name}
                   key={item.id}
-                  image={icons[item.id]}
+                  image={item.icon}
                   onPress={() => onPressItem(item.id)}
                   leftIcon={leftIcon(item.id)}
                 />
@@ -92,7 +94,7 @@ export default function AdminAddProfessionalScreen() {
             <Button
               text="Adicionar"
               uppercase
-              onPress={onAddProfessional}
+              onPress={handleSubmit(onAddProfessional)}
               additionalStyle={{ button: styles.button }}
             />
           </View>

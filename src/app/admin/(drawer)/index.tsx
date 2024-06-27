@@ -1,65 +1,19 @@
 import { Container } from '@src/components/container'
 import ListItem from '@src/components/lists/list-item'
 import CustomText from '@src/components/text/custom-text'
+import { useGetSalonSchedules } from '@src/services/hooks'
 import { useAppContext } from '@src/state/hooks'
 import { FlatList, View } from 'react-native'
 
 export default function AdminHomeScreen() {
-  const context = useAppContext()
+  const { salonId } = useAppContext()
 
-  const services2 = [
-    {
-      data: '12/07/24',
-      hora: '09:00',
-      cliente: 'Ana',
-      servico: 'Corte de cabelo',
-      id: '1'
-    },
-    {
-      data: '12/07/24',
-      hora: '09:00',
-      cliente: 'Ana',
-      servico: 'Corte de cabelo',
-      id: '2'
-    },
-    {
-      data: '12/07/24',
-      hora: '09:00',
-      cliente: 'Ana',
-      servico: 'Corte de cabelo',
-      id: '3'
-    },
-    {
-      data: '12/07/24',
-      hora: '09:00',
-      cliente: 'Ana',
-      servico: 'Corte de cabelo',
-      id: '4'
-    },
-    {
-      data: '12/07/24',
-      hora: '09:00',
-      cliente: 'Ana',
-      servico: 'Corte de cabelo',
-      id: '5'
-    },
-    {
-      data: '12/07/24',
-      hora: '09:00',
-      cliente: 'Ana',
-      servico: 'Corte de cabelo',
-      id: '6'
-    },
-    {
-      data: '12/07/24',
-      hora: '09:00',
-      cliente: 'Ana',
-      servico: 'Corte de cabelo',
-      id: '7'
-    }
-  ]
+  if (!salonId) {
+    return null
+  }
 
-  const hasSchedules = false
+  const { data } = useGetSalonSchedules(salonId)
+  const hasSchedules = !!data?.length
 
   return (
     <Container
@@ -74,16 +28,17 @@ export default function AdminHomeScreen() {
       {hasSchedules ? (
         <>
           <FlatList
-            data={services2}
+            data={data}
             renderItem={({ item }) => (
               <ListItem
                 labels={[
-                  item.data,
-                  item.hora,
+                  `Data: ${item.data}`,
+                  `Horario: ${item.hora}`,
                   `Serviço: ${item.servico}`,
-                  `Cliente: ${item.cliente}`
+                  `Cliente: ${item.nomeCliente}`,
+                  `Funcionário(a): ${item.nomeFuncionario}`
                 ]}
-                id={item.id}
+                id={item.idAgendamento}
               />
             )}
           />

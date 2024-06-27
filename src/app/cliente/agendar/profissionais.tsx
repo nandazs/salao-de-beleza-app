@@ -4,34 +4,38 @@ import ListItemPressable from '@src/components/lists/list-item-pressable'
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
 import { routes } from '@src/configs/types/routes'
+import { useGetProfessionalsBySalon } from '@src/services/hooks'
+import { Professional } from '@src/services/types'
+import { useAppContext } from '@src/state/hooks'
+import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import { FlatList, View, StyleSheet } from 'react-native'
 
 export default function ClientScheduleProfessionalScreen() {
   const [searchTerm, setSearchTerm] = useState('')
+  const { salonId, setSelectedProfessionalByClient, setSchedule } =
+    useAppContext()
 
-  const professionals = [
-    {
-      nome: 'Teste',
-      id: '1',
-      image: require('@src/assets/images/icons/arrow-left.png')
-    },
-    {
-      nome: 'FERNANDA',
-      id: '2',
-      image: require('@src/assets/images/icons/arrow-left.png')
-    },
-    {
-      nome: 'Teste',
-      id: '3',
-      image: require('@src/assets/images/icons/arrow-left.png')
-    },
-    {
-      nome: 'Teste',
-      id: '4',
-      image: require('@src/assets/images/icons/arrow-left.png')
-    }
-  ]
+  if (!salonId) {
+    return null
+  }
+
+  const { data } = useGetProfessionalsBySalon(salonId)
+  const router = useRouter()
+
+  const onPressProfessional = (item: Professional) => {
+    console.log('OSDKSOKSDOSKOS', item)
+    setSelectedProfessionalByClient(item)
+
+    setSchedule({
+      professional: {
+        name: item.nomeFuncionario,
+        id: item.idFuncionario
+      }
+    })
+
+    router.push(routes.CLIENT_SCHEDULE_SERVICE)
+  }
 
   return (
     <Container>
@@ -43,13 +47,13 @@ export default function ClientScheduleProfessionalScreen() {
       <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <View style={styles.list}>
         <FlatList
-          data={professionals}
+          data={data}
           renderItem={({ item }) => (
             <ListItemPressable
-              label={item.nome}
-              key={item.id}
+              label={item.nomeFuncionario}
+              key={item.idFuncionario}
               searchTerm={searchTerm}
-              url={routes.CLIENT_SCHEDULE_TIME}
+              onPress={() => onPressProfessional(item)}
             />
           )}
         />

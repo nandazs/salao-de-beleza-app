@@ -2,20 +2,32 @@ import Button from '@src/components/button'
 import { Container } from '@src/components/container'
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
+import { routes } from '@src/configs/types/routes'
+import { useCurrentUser, useRegisterSchedule } from '@src/services/hooks'
+import { useAppContext } from '@src/state/hooks'
+import { useRouter } from 'expo-router'
 import { View, StyleSheet } from 'react-native'
 
 export default function ClientScheduleConfirmationScreen() {
-  const info = {
-    date: '12/06/24',
-    service: 'Corte de cabelo',
-    professional: 'Anna',
-    time: '10:00'
-  }
+  const router = useRouter()
+  const { schedule, setSchedule } = useAppContext()
+  const registerSchedule = useRegisterSchedule()
+  const currentUser = useCurrentUser()
 
   const onPressRefused = () => {
-    console.log('NOOOOO')
+    router.push(routes.CLIENT_HOME)
   }
-  const onPressAccepted = () => {}
+  const onPressAccepted = () => {
+    registerSchedule.mutate(
+      { ...schedule, clientId: currentUser.userId },
+      {
+        onSuccess: () => {
+          setSchedule(undefined)
+          router.push(routes.CLIENT_HOME)
+        }
+      }
+    )
+  }
 
   return (
     <Container additionalStyle={styles.container}>
@@ -26,22 +38,22 @@ export default function ClientScheduleConfirmationScreen() {
 
       <View style={styles.text}>
         <CustomText
-          text={`Data: ${info.date}`}
+          text={`Data: ${schedule?.date}`}
           type="content"
           textAlign="left"
         />
         <CustomText
-          text={`Serviço: ${info.service}`}
+          text={`Serviço: ${schedule?.service}`}
           type="content"
           textAlign="left"
         />
         <CustomText
-          text={`Profissional: ${info.professional}`}
+          text={`Profissional: ${schedule?.professional?.name}`}
           type="content"
           textAlign="left"
         />
         <CustomText
-          text={`Horário: ${info.time}`}
+          text={`Horário: ${schedule?.time}`}
           type="content"
           textAlign="left"
         />

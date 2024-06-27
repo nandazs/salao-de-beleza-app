@@ -51,7 +51,7 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
-        name="profissionais/editar/[id]/index"
+        name="profissionais/editar/index"
         options={{
           title: 'Profissional',
           headerLeft: () => (
@@ -60,7 +60,7 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
-        name="profissionais/editar/[id]/servicos"
+        name="profissionais/editar/servicos"
         options={{
           title: 'Profissional',
           headerLeft: () => (

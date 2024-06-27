@@ -7,7 +7,6 @@ export default function Layout() {
       title: 'Agendamentos',
       drawerLabel: 'Início'
     },
-    { name: 'pagamentos', title: 'Pagamentos', drawerLabel: 'Pagamentos' },
     {
       name: 'configuracoes',
       title: 'Configurações',

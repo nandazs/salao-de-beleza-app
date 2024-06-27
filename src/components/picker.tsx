@@ -4,10 +4,10 @@ import { theme } from '@src/configs/theme'
 import { Dispatch, SetStateAction, useState } from 'react'
 
 interface PickerProps {
-  items: Array<{ nome: string }>
+  items: Array<{ name: string; id: string }>
   placeholder: string
-  setSelected: Dispatch<SetStateAction<{ nome: string } | undefined>>
-  selected?: { nome: string }
+  setSelected: Dispatch<SetStateAction<string | undefined>>
+  selected?: string
 }
 
 export const Picker = ({
@@ -18,6 +18,10 @@ export const Picker = ({
 }: PickerProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
+  if (!items) {
+    return null
+  }
+
   const onPressPicker = () => {
     if (isOpen) {
       return setIsOpen(false)
@@ -26,7 +30,8 @@ export const Picker = ({
     setIsOpen(true)
   }
 
-  const onPressItem = (selected: { nome: string }) => {
+  const onPressItem = (selected: string) => {
+    console.log('osdksoksdosdksod', selected)
     setSelected(selected)
     setIsOpen(false)
   }
@@ -36,7 +41,7 @@ export const Picker = ({
       <Pressable style={styles.picker} onPress={onPressPicker}>
         <View>
           <CustomText
-            text={selected?.nome ?? placeholder}
+            text={selected ?? placeholder}
             textAlign="left"
             type="paragraph"
           />
@@ -46,10 +51,10 @@ export const Picker = ({
       <View style={[styles.items, isOpen && styles.open]}>
         {items.map((item) => (
           <Pressable
-            key={item.nome}
-            onPress={() => onPressItem(item)}
+            key={item.id}
+            onPress={() => onPressItem(item.id)}
             style={styles.item}>
-            <CustomText text={item.nome} textAlign="left" type="paragraph" />
+            <CustomText text={item.name} textAlign="left" type="paragraph" />
           </Pressable>
         ))}
       </View>

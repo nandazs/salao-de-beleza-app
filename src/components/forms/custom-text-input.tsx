@@ -15,7 +15,7 @@ interface InputTextProps {
   error?: FieldError
   image?: ImageSourcePropType
   placeholder?: string
-  name: 'email' | 'password' | 'search' | 'nome'
+  name: 'email' | 'password' | 'search' | 'name'
   onChangeText?: any
   value?: any
   iconPosition?: 'left' | 'right'

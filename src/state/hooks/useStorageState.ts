@@ -61,6 +61,7 @@ export function useStorageState(key: string): UseStateHook<string> {
   const setValue = React.useCallback(
     (value: string | null) => {
       setState(value)
+      console.log('ODSKSOKDSOSDK', key)
       setStorageItemAsync(key, value)
     },
     [key]

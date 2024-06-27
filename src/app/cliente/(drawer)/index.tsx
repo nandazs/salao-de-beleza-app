@@ -3,16 +3,23 @@ import ListItemPressable from '@src/components/lists/list-item-pressable'
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
 import { routes } from '@src/configs/types/routes'
+import { useGetClientSchedules, useGetUserData } from '@src/services/hooks'
 import { Link } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
 
 export default function ClientHomeScreen() {
-  const hasSchedules = false
+  const { data } = useGetUserData()
+
+  if (!data?.userId) {
+    return null
+  }
+
+  const { data: schedules } = useGetClientSchedules(data?.userId)
 
   return (
     <Container>
       <CustomText text="BEM-VINDO(A)" textAlign="left" />
-      {hasSchedules ? (
+      {schedules ? (
         <View>
           <CustomText
             text="Confira os seus agendamentos:"
@@ -32,7 +39,7 @@ export default function ClientHomeScreen() {
           />
           <ListItemPressable
             label="Agendar"
-            url={routes.CLIENT_SCHEDULE_SERVICE}
+            url={routes.CLIENT_SCHEDULE_PROFESSIONAL}
           />
         </View>
       ) : (
@@ -45,7 +52,7 @@ export default function ClientHomeScreen() {
           />
           <ListItemPressable
             label="Agendar"
-            url={routes.CLIENT_SCHEDULE_SERVICE}
+            url={routes.CLIENT_SCHEDULE_PROFESSIONAL}
           />
         </View>
       )}
