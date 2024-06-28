@@ -21,7 +21,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { routes } from '@src/configs/types/routes'
 import { useRouter } from 'expo-router'
 import { getSiteConfigs } from '@src/utils/site'
-import { AUTHORIZATION, CONTENT_TYPE } from './constants'
+import { CONTENT_TYPE } from './constants'
 import { useAppContext } from '@src/state/hooks'
 
 export const useGetAllSalons = () => {
@@ -206,6 +206,7 @@ export const useSignIn = () => {
 
   const queryFn = async (props: LoginRequest) => {
     const response = await login(props)
+    console.log('sdlsplsplsdp', response)
 
     return normalizedLogin(response)
   }
@@ -217,9 +218,9 @@ export const useSignIn = () => {
       const { data } = useGetUserData()
 
       if (data?.role === 'SALAO') {
-        router.push(routes.ADMIN_HOME)
+        // router.push(routes.ADMIN_HOME)
       } else {
-        router.push(routes.CLIENT_HOME)
+        //  router.push(routes.CLIENT_HOME)
       }
     },
     onError: () => {
@@ -262,19 +263,27 @@ export const useCurrentUser = (): User => {
 export const useGetToken = () => {
   const site = getSiteConfigs()
   const headers = new Headers()
-  headers.append(AUTHORIZATION, site.keycloackToken)
   headers.append(CONTENT_TYPE, 'application/x-www-form-urlencoded')
 
   const queryFn = async (grant_type: string) => {
+    const data = {
+      client_secret: site.keycloackClientSecret,
+      client_id: site.keycloackClientId,
+      grant_type
+    }
+
+    const body = Object.keys(data)
+      .map(function (key) {
+        return encodeURIComponent(key) + '=' + encodeURIComponent(data[key])
+      })
+      .join('&')
+
     const response = (await request({
       url: `/realms/salao/protocol/openid-connect/token`,
       method: 'POST',
-      body: {
-        client_secret: site.keycloackClientSecret,
-        client_id: site.keycloackClientId,
-        grant_type
-      },
-      headers
+      body,
+      headers,
+      keycloack: true
     })) as ResponseGetToken
 
     return {

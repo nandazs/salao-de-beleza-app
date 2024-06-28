@@ -6,13 +6,11 @@ import CustomText from '@src/components/text/custom-text'
 import { Container } from '@src/components/container'
 import { theme } from '@src/configs/theme'
 import { Link } from 'expo-router'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useSessionContext } from '@src/state/session-provider'
+import { LoginRequest } from '@src/services/types'
 
 export default function LoginPage() {
   const { handleLogin } = useSessionContext()
-
-  AsyncStorage.setItem('a', 'b')
 
   const {
     control,
@@ -20,7 +18,7 @@ export default function LoginPage() {
     formState: { errors }
   } = useForm({ defaultValues: { email: '', password: '' } })
 
-  const onPressLoginButton = (data: { email: string; password: string }) => {
+  const onPressLoginButton = (data: LoginRequest) => {
     handleLogin(data)
   }
 

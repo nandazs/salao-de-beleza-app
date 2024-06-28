@@ -11,14 +11,25 @@ export const login = async ({ email, password }: LoginRequest) => {
   headers.append(GRANT_TYPE, 'password')
   headers.append(CONTENT_TYPE, 'application/x-www-form-urlencoded')
 
+  const data = {
+    username: email,
+    password: password
+  }
+
+  console.log('OKSDOSDKSDOKSDO', data)
+
+  const body = Object.keys(data)
+    .map(function (key) {
+      return encodeURIComponent(key) + '=' + encodeURIComponent(data[key])
+    })
+    .join('&')
+
   const response = await request({
     url: '/realms/salao/protocol/openid-connect/token',
     method: 'POST',
-    body: JSON.stringify({
-      username: email,
-      password: password
-    }),
-    headers
+    body,
+    headers,
+    keycloack: true
   })
 
   return response
