@@ -1,23 +1,34 @@
 import {
-  DateAndTime,
   ResponseClientSchedules,
   ResponseLogin,
   ResponseProfessionalsTimes,
   ResponseSalonSchedules
 } from '../services/types'
-import { NormalizedSchedules, type Error } from './types'
+import { NormalizedSchedules, NormalizedTimes, type Error } from './types'
 
-export const normalizeErrorResponse = (error: any): Error => ({
-  description: error?.errorDescription,
-  key: error?.errorKey,
-  message: error?.errorMessage,
-  status: error?.errorStatus,
-  hasError: !!error?.hasError
-})
+export const normalizeErrorResponse = (response: any): Error => {
+  const error = {
+    description: response?.errorDescription,
+    key: response?.errorKey,
+    message: response?.errorMessage,
+    status: response?.errorStatus,
+    hasError: !!response?.hasError
+  }
+
+  if (error.hasError) {
+    throw { error }
+  }
+
+  return response ?? []
+}
 
 export const normalizeClientSchedules = (
   response: ResponseClientSchedules
-): NormalizedSchedules => {
+): NormalizedSchedules | [] => {
+  if (!response) {
+    return []
+  }
+
   return response.map((schedule) => {
     const dateAndTime = normalizedDate(schedule.inicio)
 
@@ -35,7 +46,11 @@ export const normalizeClientSchedules = (
 
 export const normalizeSalonSchedules = (
   response: ResponseSalonSchedules
-): NormalizedSchedules => {
+): NormalizedSchedules | [] => {
+  if (!response) {
+    return []
+  }
+
   return response.map((schedule) => {
     const dateAndTime = normalizedDate(schedule.inicio)
 
@@ -46,12 +61,12 @@ export const normalizeSalonSchedules = (
       nomeFuncionario: schedule.nomeFuncionario,
       hora: dateAndTime.time,
       data: dateAndTime.date,
-      servico: ''
+      servico: schedule.servico
     }
   })
 }
 
-export const normalizedDate = (value: string): DateAndTime => {
+export const normalizedDate = (value: string): NormalizedTimes => {
   const dateAndTime = value.split(' ')
   const time = dateAndTime[1]
   const date = dateAndTime[0]
@@ -61,9 +76,9 @@ export const normalizedDate = (value: string): DateAndTime => {
   return { time, date: formattedDate }
 }
 
-export const normalizedGetProfessionalsTime = (
-  value: Array<{ dataInicio: string; dataFim: string }>
-): ResponseProfessionalsTimes => {
+export const normalizeGetProfessionalsTime = (
+  value: ResponseProfessionalsTimes
+): NormalizedTimes[] => {
   return value.map((item) => {
     return normalizedDate(item.dataInicio)
   })

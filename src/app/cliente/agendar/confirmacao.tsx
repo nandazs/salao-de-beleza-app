@@ -62,13 +62,13 @@ export default function ClientScheduleConfirmationScreen() {
         <CustomText text="Deseja confirmar agendamento?" type="subtitle" />
         <View style={styles.button_container}>
           <Button
-            text="Não"
-            onPress={onPressRefused}
+            text="Sim"
+            onPress={onPressAccepted}
             additionalStyle={{ button: styles.button }}
           />
           <Button
-            text="Sim"
-            onPress={onPressAccepted}
+            text="Não"
+            onPress={onPressRefused}
             additionalStyle={{ button: styles.button }}
           />
         </View>

@@ -1,18 +1,10 @@
 import {
   normalizeClientSchedules,
-  normalizeErrorResponse,
+  normalizeGetProfessionalsTime,
   normalizeSalonSchedules,
   normalizedLogin
 } from '../normalizers/normalizers'
-import {
-  deleteProfessional,
-  getProfessionalsBySalon,
-  getProfessionalsTimes,
-  getSalonSchedules,
-  login,
-  registerProfessional,
-  registerSchedule
-} from './queries'
+import { login, registerSchedule } from './queries'
 import { request } from './request'
 import {
   LoginRequest,
@@ -20,12 +12,17 @@ import {
   RequestRegisterSchedule,
   RequestUpdateProfessionalServices,
   ResponseGetAllSalon,
+  ResponseGetToken,
+  ResponseProfessionals,
+  ResponseProfessionalsTimes,
   User
 } from './types'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { routes } from '@src/configs/types/routes'
 import { useRouter } from 'expo-router'
+import { getSiteConfigs } from '@src/utils/site'
+import { AUTHORIZATION, CONTENT_TYPE } from './constants'
+import { useAppContext } from '@src/state/hooks'
 
 export const useGetAllSalons = () => {
   const queryFn = async () => {
@@ -34,39 +31,24 @@ export const useGetAllSalons = () => {
       method: 'GET'
     })) as Promise<ResponseGetAllSalon>
 
-    const error = normalizeErrorResponse(response)
-
-    //console.log('OKSDOSDKOSD', error)
-
-    if (error.hasError) {
-      //throw { error }
-      /// return []
-    }
-
     return response ?? []
   }
 
   return useQuery({
     queryKey: ['all-salons'],
     queryFn,
-    enabled: true,
-    //initialData: [],
-    throwOnError: false
+    enabled: true
   })
 }
 
-export const useGetClientSchedules = (id: number) => {
+export const useGetClientSchedules = (id?: number) => {
+  if (!id) null
+
   const queryFn = async () => {
     const response = await request({
       url: `/agendamentos/cliente/${id}`,
       method: 'GET'
     })
-
-    const error = normalizeErrorResponse(response)
-
-    if (error.hasError) {
-      throw { error }
-    }
 
     return normalizeClientSchedules(response)
   }
@@ -80,11 +62,10 @@ export const useGetClientSchedules = (id: number) => {
 
 export const useGetSalonSchedules = (id: string) => {
   const queryFn = async () => {
-    const response = await getSalonSchedules(id)
-
-    if (!response) {
-      return
-    }
+    const response = await request({
+      url: `/agendamentos/salao/${id}`,
+      method: 'GET'
+    })
 
     return normalizeSalonSchedules(response)
   }
@@ -98,13 +79,16 @@ export const useGetSalonSchedules = (id: string) => {
 
 export const useGetProfessionalsBySalon = (id: string) => {
   const queryFn = async () => {
-    const response = await getProfessionalsBySalon(id)
+    const response = (await request({
+      url: `/funcionarios/salao/${id}`,
+      method: 'GET'
+    })) as Promise<ResponseProfessionals>
 
-    if (!response) {
+    /* if (!response) {
       return
-    }
+    }*/
 
-    return response
+    return response ?? []
   }
 
   return useQuery({
@@ -116,13 +100,16 @@ export const useGetProfessionalsBySalon = (id: string) => {
 
 export const useGetProfessionalsTimes = (id: string) => {
   const queryFn = async () => {
-    const response = await getProfessionalsTimes(id)
+    const response = (await request({
+      url: `/funcionarios/horarios/${id}`,
+      method: 'GET'
+    })) as ResponseProfessionalsTimes //Promise<ResponseProfessionalsTimes>
 
-    if (!response) {
+    /*if (!response) {
       return
-    }
+    }*/
 
-    return response
+    return normalizeGetProfessionalsTime(response) ?? []
   }
 
   return useQuery({
@@ -134,11 +121,19 @@ export const useGetProfessionalsTimes = (id: string) => {
 
 export const useRegisterProfessional = () => {
   const queryFn = async (props: RequestRegisterProfessional) => {
-    const response = await registerProfessional(props)
+    const response = await request({
+      url: '/funcionarios/cadastrar',
+      method: 'POST',
+      body: JSON.stringify({
+        nome: props.name,
+        idSalao: props.salon,
+        servicos: props.services
+      })
+    })
 
-    if (!response) {
+    /* if (!response) {
       return
-    }
+    }*/
 
     return response
   }
@@ -149,15 +144,18 @@ export const useRegisterProfessional = () => {
   })
 }
 
+// REVISAR
 export const useRegisterSchedule = () => {
+  const { salonId } = useAppContext()
+
   const queryFn = async (props: RequestRegisterSchedule) => {
-    const response = await registerSchedule(props)
+    const response = await registerSchedule({ ...props, salonId })
 
-    if (!response) {
+    /*if (!response) {
       return
-    }
+    }*/
 
-    return response
+    return response ?? {}
   }
 
   return useMutation({
@@ -177,12 +175,6 @@ export const useUpdateProfessionalServices = () => {
       })
     })
 
-    const error = normalizeErrorResponse(response)
-
-    if (error.hasError) {
-      throw { error }
-    }
-
     return response
   }
 
@@ -199,14 +191,6 @@ export const useGetUserData = () => {
       method: 'GET'
     })) as User
 
-    const error = normalizeErrorResponse(response)
-
-    if (error.hasError) {
-      throw { error }
-    }
-
-    setCurrentUser(response)
-
     return response
   }
 
@@ -222,12 +206,6 @@ export const useSignIn = () => {
 
   const queryFn = async (props: LoginRequest) => {
     const response = await login(props)
-
-    const error = normalizeErrorResponse(response)
-
-    if (error.hasError) {
-      //  throw { error }
-    }
 
     return normalizedLogin(response)
   }
@@ -246,23 +224,18 @@ export const useSignIn = () => {
     },
     onError: () => {
       // teste
-      console.log('TESTEEEIJISDJISDJ')
-      router.push(routes.ADMIN_HOME)
+      router.push(routes.CLIENT_HOME)
     }
   })
-}
-
-export const setCurrentUser = async (user?: User) => {
-  if (user) {
-    const jsonValue = JSON.stringify(user)
-    AsyncStorage.setItem('user', jsonValue)
-  }
 }
 
 export const useDeleteProfessional = () => {
   const queryClient = useQueryClient()
   const queryFn = async (id: string) => {
-    const response = await deleteProfessional(id)
+    const response = await request({
+      url: `/funcionarios/${id}`,
+      method: 'DELETE'
+    })
 
     return response
   }
@@ -276,6 +249,7 @@ export const useDeleteProfessional = () => {
   })
 }
 
+// TESTE
 export const useCurrentUser = (): User => {
   return {
     userId: 2,
@@ -283,4 +257,33 @@ export const useCurrentUser = (): User => {
     role: 'SALAO',
     idRelacao: 4
   }
+}
+
+export const useGetToken = () => {
+  const site = getSiteConfigs()
+  const headers = new Headers()
+  headers.append(AUTHORIZATION, site.keycloackToken)
+  headers.append(CONTENT_TYPE, 'application/x-www-form-urlencoded')
+
+  const queryFn = async (grant_type: string) => {
+    const response = (await request({
+      url: `/realms/salao/protocol/openid-connect/token`,
+      method: 'POST',
+      body: {
+        client_secret: site.keycloackClientSecret,
+        client_id: site.keycloackClientId,
+        grant_type
+      },
+      headers
+    })) as ResponseGetToken
+
+    return {
+      accessToken: response.access_token
+    }
+  }
+
+  return useMutation({
+    mutationKey: ['get-token'],
+    mutationFn: queryFn
+  })
 }

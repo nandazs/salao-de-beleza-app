@@ -3,8 +3,8 @@ import ListItemPressable from '@src/components/lists/list-item-pressable'
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
 import { routes } from '@src/configs/types/routes'
+import { NormalizedTimes } from '@src/normalizers/types'
 import { useGetProfessionalsTimes } from '@src/services/hooks'
-import { DateAndTime } from '@src/services/types'
 import { useAppContext } from '@src/state/hooks'
 import { useRouter } from 'expo-router'
 import { View, StyleSheet, FlatList } from 'react-native'
@@ -19,7 +19,7 @@ export default function ClientScheduleTimeScreen() {
   const { data } = useGetProfessionalsTimes(schedule?.professional?.id)
   const router = useRouter()
 
-  const onPressTime = (item: DateAndTime) => {
+  const onPressTime = (item: NormalizedTimes) => {
     setSchedule({
       ...schedule,
       date: item.date,

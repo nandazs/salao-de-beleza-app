@@ -1,110 +1,25 @@
 import { getSiteConfigs } from '@src/utils/site'
-import {
-  normalizeErrorResponse,
-  normalizedGetProfessionalsTime
-} from '../normalizers/normalizers'
 import { request } from './request'
-import {
-  LoginRequest,
-  RequestRegisterProfessional,
-  RequestRegisterSchedule,
-  RequestUpdateProfessionalServices,
-  ResponseClientSchedules,
-  ResponseGetAllSalon,
-  ResponseProfessionals,
-  ResponseProfessionalsTimes,
-  ResponseSalonSchedules,
-  ResponseServicesBySalon
-} from './types'
+import { LoginRequest, RequestRegisterSchedule } from './types'
+import { CLIENT_ID, CLIENT_SECRET, CONTENT_TYPE, GRANT_TYPE } from './constants'
 
-export const getAllSalons = async (): Promise<ResponseGetAllSalon> => {
+export const login = async ({ email, password }: LoginRequest) => {
+  const headers = new Headers()
+  const site = getSiteConfigs()
+  headers.append(CLIENT_SECRET, site.keycloackClientSecret)
+  headers.append(CLIENT_ID, site.keycloackClientId)
+  headers.append(GRANT_TYPE, 'password')
+  headers.append(CONTENT_TYPE, 'application/x-www-form-urlencoded')
+
   const response = await request({
-    url: `/salao`,
-    method: 'GET'
-  })
-
-  const error = normalizeErrorResponse(response)
-
-  if (error.hasError) {
-    // throw { error }
-  }
-
-  return response ?? [{}]
-}
-
-export const getClientSchedules = async (
-  id: number
-): Promise<ResponseClientSchedules> => {
-  const response = await request({
-    url: `/agendamentos/cliente/${id}`,
-    method: 'GET'
-  })
-
-  const error = normalizeErrorResponse(response)
-
-  if (error.hasError) {
-    throw { error }
-  }
-
-  return response
-}
-
-export const getSalonSchedules = async (
-  id: string
-): Promise<ResponseSalonSchedules> => {
-  return await request({
-    url: `/agendamentos/salao/${id}`,
-    method: 'GET'
-  })
-}
-
-export const getServicesBySalon = async (
-  id: string
-): Promise<ResponseServicesBySalon> => {
-  return await request({
-    url: `/funcionarios/salao/${id}`,
-    method: 'GET'
-  })
-}
-
-export const getProfessionalsBySalon = async (
-  id: string
-): Promise<ResponseProfessionals> => {
-  return await request({
-    url: `/funcionarios/salao/${id}`,
-    method: 'GET'
-  })
-}
-
-export const getProfessionalsTimes = async (
-  id: string
-): Promise<ResponseProfessionalsTimes> => {
-  const response = await request({
-    url: `/funcionarios/horarios/${id}`,
-    method: 'GET'
-  })
-
-  return normalizedGetProfessionalsTime(response)
-}
-
-export const registerProfessional = async (
-  props: RequestRegisterProfessional
-) => {
-  const response = await request({
-    url: '/funcionarios/cadastrar',
+    url: '/realms/salao/protocol/openid-connect/token',
     method: 'POST',
     body: JSON.stringify({
-      nome: props.name,
-      idSalao: props.salon,
-      servicos: props.services
-    })
+      username: email,
+      password: password
+    }),
+    headers
   })
-
-  const error = normalizeErrorResponse(response)
-
-  if (error.hasError) {
-    throw { error }
-  }
 
   return response
 }
@@ -135,80 +50,9 @@ export const registerSchedule = async ({
       idSalao: salonId,
       servico: service,
       inicio,
-      fim: ''
+      fim: '2024-06-27 11:00'
     })
   })
-
-  const error = normalizeErrorResponse(response)
-
-  if (error.hasError) {
-    throw { error }
-  }
-
-  return response
-}
-
-export const updateProfessionalServices = async (
-  props: RequestUpdateProfessionalServices
-) => {
-  console.log('osdksosdkosdksd', props)
-
-  const response = await request({
-    url: '/funcionarios/cadastrar',
-    method: 'POST',
-    body: JSON.stringify({
-      idFuncionario: props.professionalId,
-      services: props.services
-    })
-  })
-
-  const error = normalizeErrorResponse(response)
-
-  if (error.hasError) {
-    throw { error }
-  }
-
-  return response
-}
-
-export const login = async ({ email, password }: LoginRequest) => {
-  const headers = new Headers()
-  const site = getSiteConfigs()
-  headers.append('client_secret', site.keycloackClientSecret)
-  headers.append('client_id', site.keycloackClientId)
-  headers.append('grant_type', 'password')
-  headers.append('Content-type', 'application/x-www-form-urlencoded')
-
-  const response = await request({
-    url: '/realms/salao/protocol/openid-connect/token',
-    method: 'POST',
-    body: JSON.stringify({
-      username: email,
-      password: password
-    }),
-    headers
-  })
-
-  const error = normalizeErrorResponse(response)
-
-  if (error.hasError) {
-    throw { error }
-  }
-
-  return response
-}
-
-export const deleteProfessional = async (salonId: string) => {
-  const response = await request({
-    url: `/funcionarios/${salonId}`,
-    method: 'DELETE'
-  })
-
-  const error = normalizeErrorResponse(response)
-
-  if (error.hasError) {
-    throw { error }
-  }
 
   return response
 }

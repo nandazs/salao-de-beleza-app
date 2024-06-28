@@ -1,7 +1,44 @@
-export interface LoginRequest {
-  email: string
-  password: string
+type SchedulesType = Array<Schedule>
+
+export type Schedule = {
+  idAgendamento: string
+  nomeSalao: string
+  nomeCliente: string
+  nomeFuncionario: string
+  inicio: string
+  fim: string
+  servico?: string
 }
+
+export interface Professional {
+  nomeFuncionario: string
+  nomeSalao: string
+  idFuncionario: string
+  servicosPrestados: string[]
+}
+
+export interface User {
+  userId: number
+  username: string
+  role: 'SALAO' | 'CLIENTE'
+  idRelacao: 4
+}
+
+export type ResponseGetAllSalon = Array<{
+  idSalao: string
+  nomeSalao: string
+  funcionarios: string[]
+}>
+
+export type ResponseClientSchedules = SchedulesType
+export type ResponseSalonSchedules = SchedulesType
+
+export type ResponseProfessionals = Array<Professional>
+
+export type ResponseProfessionalsTimes = Array<{
+  dataInicio: string
+  dataFim: string
+}>
 
 export interface RequestRegisterProfessional {
   name: string
@@ -12,6 +49,11 @@ export interface RequestRegisterProfessional {
 export interface RequestUpdateProfessionalServices {
   professionalId?: string
   services?: string[]
+}
+
+export interface LoginRequest {
+  email: string
+  password: string
 }
 
 export interface RequestRegisterSchedule {
@@ -26,63 +68,10 @@ export interface RequestRegisterSchedule {
   time?: string
 }
 
-export type ResponseSalonSchedules = SchedulesType
-
-export type ResponseClientSchedules = SchedulesType
-
-export type ResponseGetAllSalon = Array<{
-  idSalao: string
-  nomeSalao: string
-  funcionarios: string[]
-}>
-
-export type ResponseProfessionals = Array<Professional>
-
-export type ResponseServicesBySalon = Array<{
-  nome: string
-  id: string
-}>
-
-export type ResponseProfessionalsTimes = Array<{
-  time: string
-  date: string
-}>
-
-type SchedulesType = Array<Schedule>
-
-export type Schedule = {
-  idAgendamento: string
-  nomeSalao: string
-  nomeCliente: string
-  nomeFuncionario: string
-  inicio: string
-  fim: string
-  servico?: string
-}
-
-export type SalonSchedules = SchedulesType
-
-export type ClientSchedules = SchedulesType
-
-export interface Professional {
-  nomeFuncionario: string
-  nomeSalao: string
-  idFuncionario: string
-  servicosPrestados: string[]
-}
-
-export interface DateAndTime {
-  time: string
-  date: string
-}
-
 export interface ResponseLogin {
   access_token: string
 }
 
-export interface User {
-  userId: number
-  username: string
-  role: 'SALAO' | 'CLIENTE'
-  idRelacao: 4
+export interface ResponseGetToken {
+  access_token: string
 }

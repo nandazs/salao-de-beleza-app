@@ -10,6 +10,11 @@ export type NormalizedSchedule = {
   servico?: string
 }
 
+export interface NormalizedTimes {
+  time: string
+  date: string
+}
+
 interface Error {
   description: string
   key: number

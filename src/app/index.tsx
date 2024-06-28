@@ -1,20 +1,32 @@
 import { routes } from '@src/configs/types/routes'
-import { Link } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { View, StyleSheet } from 'react-native'
 import { Container } from '@src/components/container'
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Picker } from '@src/components/picker'
 import Button from '@src/components/button'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGetAllSalons } from '@src/services/hooks'
 import { useAppContext } from '@src/state/hooks'
+import { useSessionContext } from '@src/state/session-provider'
 
 export default function HomeScreen() {
+  const { handleUnloggedToken } = useSessionContext()
+  const [hasToken, setHasToken] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (!hasToken) {
+      handleUnloggedToken()
+      setHasToken(true)
+    }
+  }, [hasToken])
+
   const [selected, setSelected] = useState<string>()
   const { data } = useGetAllSalons()
   const { setSalonId } = useAppContext()
+  const router = useRouter()
 
   if (!data) {
     return (
@@ -33,6 +45,7 @@ export default function HomeScreen() {
 
   const onPressContinueButton = () => {
     setSalonId(selected)
+    router.push(routes.LOGIN)
   }
 
   return (
@@ -73,17 +86,6 @@ export default function HomeScreen() {
         />
         <View style={styles.button}>
           <Button text="Continuar" onPress={onPressContinueButton} />
-        </View>
-        <View>
-          <Link href={routes.LOGIN} style={styles.link}>
-            LOGIN
-          </Link>
-          <Link href={routes.ADMIN_HOME} style={styles.link}>
-            HOME DO ADMIN
-          </Link>
-          <Link href={routes.CLIENT_HOME} style={styles.link}>
-            HOME DO CLIENTE
-          </Link>
         </View>
       </Container>
     </SafeAreaView>

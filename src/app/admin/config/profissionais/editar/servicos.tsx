@@ -11,28 +11,40 @@ import { useUpdateProfessionalServices } from '@src/services/hooks'
 import { useRouter } from 'expo-router'
 import { routes } from '@src/configs/types/routes'
 
+interface Item {
+  id: string
+  name: string
+  icon: string
+}
+
 export default function AdminEditProfessionalServices() {
   const { selectedProfessionalToEdit, setSelectedProfessionalToEdit } =
     useAppContext()
   const updateProfessionalServices = useUpdateProfessionalServices()
   const router = useRouter()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [initialSelecteds, setInitialSelecteds] = useState<Item[]>([])
+  const [selecteds, setSelecteds] = useState<Item[]>([])
 
   const filteredServices = services.filter(
-    (item, index) => selectedProfessionalToEdit?.services?.[index] === item.id
+    (item, index) =>
+      selectedProfessionalToEdit?.services?.[index] === item.id ||
+      selectedProfessionalToEdit?.services?.[index] === 'CORTE_CABELO' // apenas teste - um usuario tá cadastrado com o servico assim
   )
 
   useEffect(() => {
     if (filteredServices) {
-      setSelecteds(filteredServices)
+      setInitialSelecteds(filteredServices)
     }
   }, [selectedProfessionalToEdit])
 
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selecteds, setSelecteds] = useState<
-    { id: string; name: string; icon: string }[]
-  >([])
+  const onPressItem = (item: Item) => {
+    if (initialSelecteds.includes(item)) {
+      setInitialSelecteds(
+        initialSelecteds.filter((selected) => selected.id !== item.id)
+      )
+    }
 
-  const onPressItem = (item: { id: string; name: string; icon: string }) => {
     if (selecteds.includes(item)) {
       return setSelecteds(
         selecteds.filter((selected) => selected.id !== item.id)
@@ -42,8 +54,15 @@ export default function AdminEditProfessionalServices() {
     return setSelecteds(selecteds.concat(item))
   }
 
-  const leftIcon = (item: { id: string; name: string; icon: string }) => {
-    if (selecteds.includes(item)) {
+  const leftIcon = (item: Item) => {
+    const itemIsSelected =
+      initialSelecteds.includes(item) && selecteds.includes(item)
+
+    if (itemIsSelected) {
+      return require('@src/assets/images/icons/add.png')
+    }
+
+    if (initialSelecteds.includes(item) || selecteds.includes(item)) {
       return require('@src/assets/images/icons/checked.png')
     }
 
@@ -54,7 +73,9 @@ export default function AdminEditProfessionalServices() {
     updateProfessionalServices.mutate(
       {
         professionalId: selectedProfessionalToEdit?.professionalId,
-        services: selecteds.map((service) => service.id)
+        services: initialSelecteds
+          .concat(selecteds)
+          .map((service) => service.id)
       },
       {
         onSuccess: () => {
@@ -70,7 +91,7 @@ export default function AdminEditProfessionalServices() {
       <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <View style={styles.list}>
         <FlatList
-          data={filteredServices}
+          data={services}
           renderItem={({ item }) => (
             <ListItemPressable
               label={item.name}
@@ -83,7 +104,7 @@ export default function AdminEditProfessionalServices() {
           )}
         />
       </View>
-      {selecteds.length > 0 && (
+      {selecteds.length && (
         <View style={styles.button_container}>
           <Button text="Salvar mudanças" uppercase onPress={onPressSave} />
         </View>

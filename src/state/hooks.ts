@@ -59,8 +59,6 @@ export const useAppStore = () => {
   const [selectedProfessionalByClient, setSelectedProfessionalByClient] =
     useState<Professional | undefined>()
 
-  console.log('oweksodksodsosd', salonId)
-
   return {
     schedule,
     setSchedule,

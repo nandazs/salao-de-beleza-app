@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { useStorageState } from './hooks/useStorageState'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Stack } from 'expo-router'
-import { useSignIn } from '@src/services/hooks'
+import { useGetToken, useSignIn } from '@src/services/hooks'
 import { LoginRequest } from '@src/services/types'
 
 const AuthContext = React.createContext<{
-  session?: string | null
-  isLoading: boolean
-  setSession: (session: string | null) => void
   handleLogout: () => void
   handleLogin: (
     credentials: LoginRequest,
     onSuccess?: () => void,
     onError?: () => void
   ) => void
+  handleUnloggedToken: () => void
 }>({
-  session: null,
-  isLoading: false,
-  setSession: () => null,
   handleLogin: () => null,
-  handleLogout: () => null
+  handleLogout: () => null,
+  handleUnloggedToken: () => null
 })
 
 export function useSessionContext() {
@@ -35,10 +30,27 @@ export function useSessionContext() {
 }
 
 export function SessionProvider() {
-  const [[isLoading, session], setSession] = useStorageState('session') // ignorar é do expo
   const [loggedIn, setLoggedIn] = useState(false)
 
   const signIn = useSignIn()
+  const getToken = useGetToken()
+
+  const handleUnloggedToken = () => {
+    if (!loggedIn) {
+      getToken.mutate('client_credentials', {
+        onSuccess: (response) => {
+          saveLoggedInToken(response.accessToken)
+        },
+        onError: () => {
+          // Esse é um teste usado apenas para quando dá falha
+          console.log('TESTE')
+          saveLoggedInToken(
+            'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJDcHhhVFkyb2ZNTVpaa2xEalZzdHlMQjJDaDJxa1d6VVdDTkZHQ3d2YldJIn0.eyJleHAiOjE3MTk1NTc3MzUsImlhdCI6MTcxOTUzOTczNSwianRpIjoiODkxNmYzZjUtNjdlNi00MmQ4LWE5M2QtNDRkY2FlYTFhOTJmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9zYWxhbyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIyMjc0NmFmYS00NDRlLTQ4MTUtOGI5My05YzQ1MTBhNTBmOTIiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzYWxhb19jbGllbnQiLCJzaWQiOiIzZDQwMzFkMi1kOGRjLTQ1MDEtOGI4MS05NzAxODFkOWNhMTkiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9sb2NhbGhvc3Q6ODA4Mi8qIiwiaHR0cDovL2xvY2FsaG9zdDo4MDgyIiwiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLXNhbGFvIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJmZXJuYW5kYTEifQ.Lx3tHX0JxdGecoxFG42wQLCEQZonBo8lMTQxDjV1H7ghM3OaRWjph58jazzjbY6AoecKGSfCi9HMm7eHZCiluKD-XNqTcY8K7e9uG0hae5J4afZAirZcdurDXX-uPjlfWFad-Y3ACqGe2XqFDRMPusLl1eKM_d15SKJw7FSOyCIppQk1797BzxvdHl2EFwXyoLpUXkAl5M9jrvSRUFeg_nI3_QYT6LOYsUIlj-_BHX0n1OW5xGmdw4X5foqI3lAgiJ1-Id8VK-7x0B-31xO6RstDy-66Rlr7flDBurvLSrvDvg3eFX_t-irakRehs0HCGSFYWg7AGPFHnf0J1A-Drg'
+          )
+        }
+      })
+    }
+  }
 
   const handleLogin = (
     credentials: LoginRequest,
@@ -56,7 +68,7 @@ export function SessionProvider() {
         console.log('TESTE')
         onError?.()
         saveLoggedInToken(
-          'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJDcHhhVFkyb2ZNTVpaa2xEalZzdHlMQjJDaDJxa1d6VVdDTkZHQ3d2YldJIn0.eyJleHAiOjE3MTk1NDgzMjUsImlhdCI6MTcxOTUzMDMyNSwianRpIjoiMzdkOTYwYTgtNGMyZi00YTA3LThmYjgtYzY1Zjk5ZTZlYWY1IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9zYWxhbyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIyMjc0NmFmYS00NDRlLTQ4MTUtOGI5My05YzQ1MTBhNTBmOTIiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzYWxhb19jbGllbnQiLCJzaWQiOiJlZjYxZDBjYy03MmMyLTQ3OGItYmQ5NC03YjJjOTVlMDZiMzEiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9sb2NhbGhvc3Q6ODA4Mi8qIiwiaHR0cDovL2xvY2FsaG9zdDo4MDgyIiwiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLXNhbGFvIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJmZXJuYW5kYTEifQ.XjvPc_HCKm3sk5JqKG5Km9d5_cmM2Ih07QtE9yYj4WQynq9Hch2HH5J3NSAf9J-jC8GVRNGu7FD34DR8wPnhyBFxdgqNQ08IkkxlIGAQxCi5ZYgQPMYH_RKD2ol3Fl4GUrVpL62zruc8mIRVT0VMvqfNw5ghriPC4XtIQe03UK753PBgMYHEZ8MIhq5EL06N0CcdraZy096Q3cpdAfjxQmMVeg9sLvUffcLYW3rn9WiOgZDt0xN-yZCtltpaws-T9qKlcRwdsKL7_IbuTGy7GzOZDa_oWVJR69qR-5CwLqcwfrZ7H0K6l6-7oPve6KmDbcTdMWsBuvwTdncW63RrWg'
+          'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJDcHhhVFkyb2ZNTVpaa2xEalZzdHlMQjJDaDJxa1d6VVdDTkZHQ3d2YldJIn0.eyJleHAiOjE3MTk1NTc3MzUsImlhdCI6MTcxOTUzOTczNSwianRpIjoiODkxNmYzZjUtNjdlNi00MmQ4LWE5M2QtNDRkY2FlYTFhOTJmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9zYWxhbyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIyMjc0NmFmYS00NDRlLTQ4MTUtOGI5My05YzQ1MTBhNTBmOTIiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzYWxhb19jbGllbnQiLCJzaWQiOiIzZDQwMzFkMi1kOGRjLTQ1MDEtOGI4MS05NzAxODFkOWNhMTkiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9sb2NhbGhvc3Q6ODA4Mi8qIiwiaHR0cDovL2xvY2FsaG9zdDo4MDgyIiwiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLXNhbGFvIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJmZXJuYW5kYTEifQ.Lx3tHX0JxdGecoxFG42wQLCEQZonBo8lMTQxDjV1H7ghM3OaRWjph58jazzjbY6AoecKGSfCi9HMm7eHZCiluKD-XNqTcY8K7e9uG0hae5J4afZAirZcdurDXX-uPjlfWFad-Y3ACqGe2XqFDRMPusLl1eKM_d15SKJw7FSOyCIppQk1797BzxvdHl2EFwXyoLpUXkAl5M9jrvSRUFeg_nI3_QYT6LOYsUIlj-_BHX0n1OW5xGmdw4X5foqI3lAgiJ1-Id8VK-7x0B-31xO6RstDy-66Rlr7flDBurvLSrvDvg3eFX_t-irakRehs0HCGSFYWg7AGPFHnf0J1A-Drg'
         )
       }
     })
@@ -90,11 +102,9 @@ export function SessionProvider() {
   return (
     <AuthContext.Provider
       value={{
-        session,
-        isLoading,
-        setSession,
         handleLogin,
-        handleLogout
+        handleLogout,
+        handleUnloggedToken
       }}>
       <Stack
         screenOptions={{

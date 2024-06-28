@@ -18,30 +18,6 @@ export default function Layout() {
         }
       }}>
       <Stack.Screen
-        name="servicos/index"
-        options={{
-          title: 'Serviços',
-          headerLeft: () => (
-            <CustomBackButton url={routes.ADMIN_CONFIGURATIONS} />
-          )
-        }}
-      />
-      <Stack.Screen
-        name="servicos/adicionar"
-        options={{
-          title: 'Adicionar serviços',
-          headerLeft: () => <CustomBackButton url={routes.ADMIN_SERVICES} />
-        }}
-      />
-      <Stack.Screen
-        name="servicos/remover"
-        options={{
-          title: 'Remover serviços',
-          headerLeft: () => <CustomBackButton url={routes.ADMIN_SERVICES} />
-        }}
-      />
-
-      <Stack.Screen
         name="profissionais/index"
         options={{
           title: 'Profissionais',

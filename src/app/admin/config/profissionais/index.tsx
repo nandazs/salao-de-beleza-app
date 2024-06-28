@@ -45,6 +45,8 @@ export default function AdminConfigProfessionalsScreen() {
   }
 
   const onEditProfessional = (item: Professional) => {
+    console.log('OSDKLSOKDSOSDKO', item)
+
     setSelectedProfessionalToEdit({
       professionalId: item.idFuncionario,
       services: item.servicosPrestados

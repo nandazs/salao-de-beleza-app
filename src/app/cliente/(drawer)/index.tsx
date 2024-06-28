@@ -4,15 +4,10 @@ import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
 import { routes } from '@src/configs/types/routes'
 import { useGetClientSchedules, useGetUserData } from '@src/services/hooks'
-import { Link } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
 
 export default function ClientHomeScreen() {
   const { data } = useGetUserData()
-
-  if (!data?.userId) {
-    return null
-  }
 
   const { data: schedules } = useGetClientSchedules(data?.userId)
 
@@ -56,8 +51,6 @@ export default function ClientHomeScreen() {
           />
         </View>
       )}
-
-      <Link href="/">Voltar - home</Link>
     </Container>
   )
 }
