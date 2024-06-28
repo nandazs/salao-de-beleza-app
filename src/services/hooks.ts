@@ -1,10 +1,9 @@
 import {
   normalizeClientSchedules,
   normalizeGetProfessionalsTime,
-  normalizeSalonSchedules,
-  normalizedLogin
+  normalizeSalonSchedules
 } from '../normalizers/normalizers'
-import { login, registerSchedule } from './queries'
+import { getUserDataTodo, loginTodo, registerSchedule } from './queries'
 import { request } from './request'
 import {
   LoginRequest,
@@ -54,9 +53,9 @@ export const useGetClientSchedules = (id?: number) => {
   }
 
   return useQuery({
-    queryKey: ['client-schedules'],
+    queryKey: ['client-schedules', id],
     queryFn: queryFn,
-    enabled: true
+    enabled: !!id
   })
 }
 
@@ -71,9 +70,9 @@ export const useGetSalonSchedules = (id: string) => {
   }
 
   return useQuery({
-    queryKey: ['salon-schedules'],
+    queryKey: ['salon-schedules', id],
     queryFn: queryFn,
-    enabled: true
+    enabled: !!id
   })
 }
 
@@ -84,17 +83,13 @@ export const useGetProfessionalsBySalon = (id: string) => {
       method: 'GET'
     })) as Promise<ResponseProfessionals>
 
-    /* if (!response) {
-      return
-    }*/
-
     return response ?? []
   }
 
   return useQuery({
-    queryKey: ['salon-professionals'],
+    queryKey: ['salon-professionals', id],
     queryFn: queryFn,
-    enabled: true
+    enabled: !!id
   })
 }
 
@@ -103,19 +98,15 @@ export const useGetProfessionalsTimes = (id: string) => {
     const response = (await request({
       url: `/funcionarios/horarios/${id}`,
       method: 'GET'
-    })) as ResponseProfessionalsTimes //Promise<ResponseProfessionalsTimes>
+    })) as Promise<ResponseProfessionalsTimes>
 
-    /*if (!response) {
-      return
-    }*/
-
-    return normalizeGetProfessionalsTime(response) ?? []
+    return normalizeGetProfessionalsTime(await response) ?? []
   }
 
   return useQuery({
-    queryKey: ['professionals-times'],
+    queryKey: ['professionals-times', id],
     queryFn: queryFn,
-    enabled: true
+    enabled: !!id
   })
 }
 
@@ -131,10 +122,6 @@ export const useRegisterProfessional = () => {
       })
     })
 
-    /* if (!response) {
-      return
-    }*/
-
     return response
   }
 
@@ -144,23 +131,22 @@ export const useRegisterProfessional = () => {
   })
 }
 
-// REVISAR
 export const useRegisterSchedule = () => {
   const { salonId } = useAppContext()
+  const queryClient = useQueryClient()
 
   const queryFn = async (props: RequestRegisterSchedule) => {
     const response = await registerSchedule({ ...props, salonId })
-
-    /*if (!response) {
-      return
-    }*/
 
     return response ?? {}
   }
 
   return useMutation({
     mutationKey: ['register-schedule'],
-    mutationFn: queryFn
+    mutationFn: queryFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['client-schedules'] })
+    }
   })
 }
 
@@ -186,10 +172,7 @@ export const useUpdateProfessionalServices = () => {
 
 export const useGetUserData = () => {
   const queryFn = async () => {
-    const response = (await request({
-      url: `/user`,
-      method: 'GET'
-    })) as User
+    const response = await getUserDataTodo()
 
     return response
   }
@@ -201,31 +184,29 @@ export const useGetUserData = () => {
   })
 }
 
-export const useSignIn = () => {
+export const useLogin = () => {
   const router = useRouter()
-
   const queryFn = async (props: LoginRequest) => {
-    const response = await login(props)
-    console.log('sdlsplsplsdp', response)
-
-    return normalizedLogin(response)
+    const response = await loginTodo(props)
+    return response
   }
 
   return useMutation({
     mutationKey: ['login'],
     mutationFn: queryFn,
-    onSuccess: () => {
-      const { data } = useGetUserData()
+    onSuccess: async (data) => {
+      const response = await getUserDataTodo(data)
 
-      if (data?.role === 'SALAO') {
-        // router.push(routes.ADMIN_HOME)
-      } else {
-        //  router.push(routes.CLIENT_HOME)
+      if (response.role) {
+        if (response.role === 'SALAO') {
+          router.push(routes.ADMIN_HOME)
+        } else {
+          router.push(routes.CLIENT_HOME)
+        }
       }
     },
-    onError: () => {
-      // teste
-      router.push(routes.CLIENT_HOME)
+    onError: (error) => {
+      console.error('Error:', error)
     }
   })
 }
@@ -248,16 +229,6 @@ export const useDeleteProfessional = () => {
       queryClient.invalidateQueries({ queryKey: ['salon-professionals'] })
     }
   })
-}
-
-// TESTE
-export const useCurrentUser = (): User => {
-  return {
-    userId: 2,
-    username: 'fernanda1',
-    role: 'SALAO',
-    idRelacao: 4
-  }
 }
 
 export const useGetToken = () => {
@@ -295,4 +266,14 @@ export const useGetToken = () => {
     mutationKey: ['get-token'],
     mutationFn: queryFn
   })
+}
+
+// TESTE
+export const useCurrentUser = (): User => {
+  return {
+    userId: 2,
+    username: 'fernanda1',
+    role: 'SALAO',
+    idRelacao: 4
+  }
 }

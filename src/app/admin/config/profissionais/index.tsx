@@ -45,8 +45,6 @@ export default function AdminConfigProfessionalsScreen() {
   }
 
   const onEditProfessional = (item: Professional) => {
-    console.log('OSDKLSOKDSOSDKO', item)
-
     setSelectedProfessionalToEdit({
       professionalId: item.idFuncionario,
       services: item.servicosPrestados
@@ -54,10 +52,27 @@ export default function AdminConfigProfessionalsScreen() {
     router.push(routes.ADMIN_EDIT_PROFESSIONAL)
   }
 
+  if (!data?.length) {
+    return (
+      <Container>
+        <CustomText
+          text="O salão não possui nenhum profissional no momento"
+          type="subtitle"
+          textAlign="left"
+        />
+        <ListItemPressable
+          label="Adicionar novo profissional"
+          url={routes.ADMIN_ADD_PROFESSIONAL}
+          leftIcon={require('@src/assets/images/icons/add.png')}
+        />
+      </Container>
+    )
+  }
+
   return (
     <Container>
       <CustomModal open={openConfirmModal} setOpenModal={setOpenConfirmModal}>
-        <CustomText text="Deseja remover o profissional?" type="title" />
+        <CustomText text="Deseja remover o(a) profissional?" type="subtitle" />
         <View style={{ flexDirection: 'row', gap: theme.sizes.tiny }}>
           <Button
             text="Sim"

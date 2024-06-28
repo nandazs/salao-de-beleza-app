@@ -17,7 +17,8 @@ export default function ClientScheduleServiceScreen() {
 
   const filteredServices = services.filter(
     (item, index) =>
-      selectedProfessionalByClient?.servicosPrestados[index] === item.id
+      selectedProfessionalByClient?.servicosPrestados[index] === item.id ||
+      selectedProfessionalByClient?.servicosPrestados[index] === 'CORTE_CABELO'
   )
 
   const [searchTerm, setSearchTerm] = useState('')

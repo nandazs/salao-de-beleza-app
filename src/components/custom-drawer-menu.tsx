@@ -7,7 +7,8 @@ import {
   DrawerItemList,
   DrawerToggleButton
 } from '@react-navigation/drawer'
-import { View, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { useSessionContext } from '@src/state/session-provider'
 
 interface CustomDrawerMenuProps {
   menu: Array<{
@@ -18,10 +19,15 @@ interface CustomDrawerMenuProps {
 }
 
 function CustomDrawerContent(drawerProps: DrawerContentComponentProps) {
+  const { handleLogout } = useSessionContext()
+
   return (
     <DrawerContentScrollView {...drawerProps}>
       <View style={styles.menu_header} />
       <DrawerItemList {...drawerProps} />
+      <Pressable onPress={handleLogout} style={styles.logout}>
+        <Text style={styles.logoutText}>Sair</Text>
+      </Pressable>
     </DrawerContentScrollView>
   )
 }
@@ -76,5 +82,13 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.light,
     borderBottomWidth: 1,
     marginBottom: theme.sizes.standard
+  },
+  logout: {
+    marginLeft: theme.sizes.small,
+    marginTop: theme.sizes.small
+  },
+  logoutText: {
+    color: 'white',
+    fontWeight: 500
   }
 })

@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     color: theme.typography.title.color
   },
   subtitle: {
-    fontSize: theme.typography.title.fontSize,
+    fontSize: theme.typography.subtitle.fontSize,
     color: theme.typography.subtitle.color
   },
   content: {

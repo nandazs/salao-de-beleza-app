@@ -1,13 +1,13 @@
-import { StyleSheet, View, Text, SafeAreaView } from 'react-native'
+import { StyleSheet, View, SafeAreaView } from 'react-native'
 import { useForm } from 'react-hook-form'
 import Button from '@src/components/button'
 import { CustomTextInput } from '@src/components/forms/custom-text-input'
 import CustomText from '@src/components/text/custom-text'
 import { Container } from '@src/components/container'
 import { theme } from '@src/configs/theme'
-import { Link } from 'expo-router'
 import { useSessionContext } from '@src/state/session-provider'
 import { LoginRequest } from '@src/services/types'
+import { useCallback } from 'react'
 
 export default function LoginPage() {
   const { handleLogin } = useSessionContext()
@@ -18,12 +18,13 @@ export default function LoginPage() {
     formState: { errors }
   } = useForm({ defaultValues: { email: '', password: '' } })
 
-  const onPressLoginButton = (data: LoginRequest) => {
+  const onPressLoginButton = useCallback((data: LoginRequest) => {
     handleLogin(data)
-  }
+  }, [])
 
   return (
-    <SafeAreaView style={{ backgroundColor: theme.colors.background }}>
+    <SafeAreaView
+      style={{ backgroundColor: theme.colors.background, height: '100%' }}>
       <Container>
         <CustomText
           text="Faça login na sua conta de cliente ou administrador"
@@ -45,8 +46,8 @@ export default function LoginPage() {
             error={errors.password}
             placeholder="Senha"
             name="password"
+            secureTextEntry
           />
-          {errors.password && <Text>This is required.</Text>}
           <View style={styles.button_view}>
             <Button
               text="Entrar"
@@ -56,8 +57,6 @@ export default function LoginPage() {
             />
           </View>
         </View>
-
-        <Link href="/">VOTLAR</Link>
       </Container>
     </SafeAreaView>
   )

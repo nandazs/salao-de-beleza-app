@@ -6,8 +6,10 @@ import { Dispatch, SetStateAction, useState } from 'react'
 interface PickerProps {
   items: Array<{ name: string; id: string }>
   placeholder: string
-  setSelected: Dispatch<SetStateAction<string | undefined>>
-  selected?: string
+  setSelected: Dispatch<
+    SetStateAction<{ id: string; name: string } | undefined>
+  >
+  selected?: { id: string; name: string }
 }
 
 export const Picker = ({
@@ -30,8 +32,7 @@ export const Picker = ({
     setIsOpen(true)
   }
 
-  const onPressItem = (selected: string) => {
-    console.log('osdksoksdosdksod', selected)
+  const onPressItem = (selected: { id: string; name: string }) => {
     setSelected(selected)
     setIsOpen(false)
   }
@@ -41,7 +42,7 @@ export const Picker = ({
       <Pressable style={styles.picker} onPress={onPressPicker}>
         <View>
           <CustomText
-            text={selected ?? placeholder}
+            text={selected?.name ?? placeholder}
             textAlign="left"
             type="paragraph"
           />
@@ -52,7 +53,7 @@ export const Picker = ({
         {items.map((item) => (
           <Pressable
             key={item.id}
-            onPress={() => onPressItem(item.id)}
+            onPress={() => onPressItem(item)}
             style={styles.item}>
             <CustomText text={item.name} textAlign="left" type="paragraph" />
           </Pressable>

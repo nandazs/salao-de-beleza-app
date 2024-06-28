@@ -1,7 +1,6 @@
 import {
   StyleSheet,
   View,
-  Text,
   TextInput,
   Image,
   ImageSourcePropType
@@ -20,6 +19,7 @@ interface InputTextProps {
   value?: any
   iconPosition?: 'left' | 'right'
   label?: string
+  secureTextEntry?: boolean
 }
 
 export const CustomTextInput = ({
@@ -31,7 +31,8 @@ export const CustomTextInput = ({
   onChangeText,
   value,
   iconPosition = 'left',
-  label
+  label,
+  secureTextEntry
 }: InputTextProps) => {
   return (
     <View>
@@ -39,7 +40,8 @@ export const CustomTextInput = ({
       <View
         style={[
           styles.lp_inputContainer,
-          iconPosition === 'right' && styles.iconRight
+          iconPosition === 'right' && styles.iconRight,
+          error && styles.error
         ]}>
         {control ? (
           <>
@@ -59,13 +61,13 @@ export const CustomTextInput = ({
                     onChangeText={onChange}
                     value={value}
                     style={styles.lp_input}
+                    secureTextEntry={secureTextEntry}
                     placeholderTextColor={theme.typography.title.color}
                   />
                 </>
               )}
               name={name}
             />
-            {error && <Text>Esse campo é obrigatório.</Text>}
           </>
         ) : (
           <>
@@ -80,6 +82,14 @@ export const CustomTextInput = ({
           </>
         )}
       </View>
+      {error && (
+        <CustomText
+          text="Campo obrigatório"
+          textAlign="left"
+          type="paragraph"
+          style={styles.errorText}
+        />
+      )}
     </View>
   )
 }
@@ -103,5 +113,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingRight: theme.sizes.small
+  },
+  error: {
+    borderWidth: 1,
+    borderColor: 'red'
+  },
+  errorText: {
+    color: 'red',
+    marginTop: theme.sizes.tiny,
+    marginBottom: theme.sizes.small
   }
 })

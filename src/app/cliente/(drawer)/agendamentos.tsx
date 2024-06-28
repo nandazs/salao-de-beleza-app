@@ -4,16 +4,19 @@ import { Schedules } from '@src/components/schedules'
 import CustomText from '@src/components/text/custom-text'
 import { theme } from '@src/configs/theme'
 import { routes } from '@src/configs/types/routes'
-import { useCurrentUser, useGetClientSchedules } from '@src/services/hooks'
+import {
+  // useCurrentUser,
+  useGetClientSchedules,
+  useGetUserData
+} from '@src/services/hooks'
 import { StyleSheet } from 'react-native'
 
 export default function ClientSchedulesScreen() {
-  const currentUser = useCurrentUser()
-  const { data } = useGetClientSchedules(currentUser.userId)
+  // const currentUser = useCurrentUser()
+  const { data } = useGetUserData()
+  const { data: schedules } = useGetClientSchedules(data?.userId)
 
-  console.log('OSKDOSKDSOSKO', data)
-
-  if (!data?.length) {
+  if (!schedules?.length) {
     return (
       <Container>
         <CustomText
@@ -24,7 +27,7 @@ export default function ClientSchedulesScreen() {
         />
         <ListItemPressable
           label="Agendar"
-          url={routes.CLIENT_SCHEDULE_SERVICE}
+          url={routes.CLIENT_SCHEDULE_PROFESSIONAL}
         />
       </Container>
     )
@@ -37,7 +40,7 @@ export default function ClientSchedulesScreen() {
         type="paragraph"
         textAlign="left"
       />
-      <Schedules schedules={data} />
+      <Schedules schedules={schedules} />
     </Container>
   )
 }

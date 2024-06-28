@@ -1,35 +1,43 @@
 import { getSiteConfigs } from '@src/utils/site'
 import { request } from './request'
-import { LoginRequest, RequestRegisterSchedule } from './types'
-import { CLIENT_ID, CLIENT_SECRET, CONTENT_TYPE, GRANT_TYPE } from './constants'
+import { LoginRequest, RequestRegisterSchedule, User } from './types'
+import { AUTHORIZATION, CONTENT_TYPE } from './constants'
 
-export const login = async ({ email, password }: LoginRequest) => {
-  const headers = new Headers()
+export const loginTodo = async ({
+  email,
+  password
+}: LoginRequest): Promise<string> => {
   const site = getSiteConfigs()
-  headers.append(CLIENT_SECRET, site.keycloackClientSecret)
-  headers.append(CLIENT_ID, site.keycloackClientId)
-  headers.append(GRANT_TYPE, 'password')
+
+  const headers = new Headers()
   headers.append(CONTENT_TYPE, 'application/x-www-form-urlencoded')
-
-  const data = {
-    username: email,
-    password: password
-  }
-
-  console.log('OKSDOSDKSDOKSDO', data)
-
-  const body = Object.keys(data)
-    .map(function (key) {
-      return encodeURIComponent(key) + '=' + encodeURIComponent(data[key])
-    })
-    .join('&')
+  const body = new URLSearchParams()
+  body.append('client_secret', site.keycloackClientSecret)
+  body.append('client_id', site.keycloackClientId)
+  body.append('grant_type', 'password')
+  body.append('username', email)
+  body.append('password', password)
 
   const response = await request({
     url: '/realms/salao/protocol/openid-connect/token',
     method: 'POST',
-    body,
+    body: body.toString(),
     headers,
     keycloack: true
+  })
+
+  return response.access_token
+}
+
+export const getUserDataTodo = async (token?: string): Promise<User> => {
+  const headers = new Headers()
+  if (token) {
+    headers.append(AUTHORIZATION, 'Bearer ' + token)
+  }
+  const response = await request({
+    url: `/user`,
+    method: 'GET',
+    headers
   })
 
   return response

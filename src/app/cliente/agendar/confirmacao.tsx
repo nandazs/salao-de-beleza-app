@@ -12,9 +12,11 @@ export default function ClientScheduleConfirmationScreen() {
   const router = useRouter()
   const { schedule, setSchedule } = useAppContext()
   const registerSchedule = useRegisterSchedule()
+  // const { data } = useGetUserData()
   const currentUser = useCurrentUser()
 
   const onPressRefused = () => {
+    setSchedule(undefined)
     router.push(routes.CLIENT_HOME)
   }
   const onPressAccepted = () => {

@@ -23,7 +23,7 @@ export default function HomeScreen() {
     }
   }, [hasToken])
 
-  const [selected, setSelected] = useState<string>()
+  const [selected, setSelected] = useState<{ id: string; name: string }>()
   const { data } = useGetAllSalons()
   const { setSalonId } = useAppContext()
   const router = useRouter()
@@ -44,12 +44,13 @@ export default function HomeScreen() {
   }
 
   const onPressContinueButton = () => {
-    setSalonId(selected)
+    setSalonId(selected?.id)
     router.push(routes.LOGIN)
   }
 
   return (
-    <SafeAreaView style={{ backgroundColor: theme.colors.background }}>
+    <SafeAreaView
+      style={{ backgroundColor: theme.colors.background, height: '100%' }}>
       <Container>
         <View style={styles.container}>
           <CustomText
